@@ -32,15 +32,23 @@ industries:
     - "[PLACEHOLDER]"
   sub_sectors: {}             # e.g.  Finance: ["Treasury Tech", "Electronic Trading"]
 
+# Compensation — OPTIONAL. Used for exactly one thing: flagging JDs that post
+# below your minimum. Leave both blank and comp never comes up.
+# Format examples: "$120k base" · "$150k total comp" · "$60/hr contract"
 compensation:
-  target_range: "[PLACEHOLDER]"
-  minimum: "[PLACEHOLDER]"
+  target_range: ""
+  minimum: ""
   currency: "USD"
 
 location:
-  preferred: []
+  preferred: []               # e.g. ["Remote (US)", "Boston, MA"]
   open_to: []
-  visa_status: "[PLACEHOLDER]"
+
+# Visa — OPTIONAL, and separate from location. Used for exactly one thing:
+# flagging JDs that say they won't sponsor. Leave blank if it's not relevant
+# to you and rolecraft will never raise the topic.
+visa:
+  status: ""
   needs_sponsorship: false
 
 # Skill behavior settings.

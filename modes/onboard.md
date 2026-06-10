@@ -23,13 +23,14 @@ Write `user/profile/cv.md` following the structure of `templates/cv.template.md`
 
 ## Step 2 — Identity & targets → `user/profile/profile.yml`
 
-Copy `templates/profile.template.yml` to `user/profile/profile.yml`, then fill it interactively:
+Copy `templates/profile.template.yml` to `user/profile/profile.yml`, then fill it interactively. Ask location, compensation, and visa as SEPARATE questions — never bundle them into one wall.
 
-- **candidate** — name, email, location, links. Pre-fill anything already evident from the CV; confirm rather than re-ask.
-- **target_roles.archetypes** — ask which role archetypes they're targeting (suggest options based on the CV). For each, propose 2–4 synonyms (phrasing variants that appear in real JDs) and confirm. Record `level` and `fit` (`primary` / `secondary` / `adjacent`).
+- **candidate** — name, email, links. Pre-fill anything already evident from the CV; confirm rather than re-ask.
+- **location** — offer a prefill before asking an open question: infer their likely base from the CV (most recent job's location, or their education's location for a recent grad) and ask "Default your location to <city>? That's what your CV suggests." Then capture preferred and open-to; remote counts as a location.
+- **target_roles.archetypes** — ask which role archetypes they're targeting (suggest options based on the CV). Map internship/co-op experience to the full-time title they'd enter as: a software engineering co-op targets "Software Engineer" / "Software Engineer I/II", never "Intern"; a data co-op targets entry-level "Data Analyst" / "Data Scientist". For each archetype, propose 2–4 synonyms (phrasing variants that appear in real JDs) and confirm. Record `level` and `fit` (`primary` / `secondary` / `adjacent`).
 - **industries** — ask for target industries, multi-select plus custom. Offer "any industry — match on title alone" explicitly; that sets `mode: "any"`. Sub-sectors optional.
-- **compensation** — target range and minimum. Optional; empty strings are fine.
-- **location** — preferred, open-to, visa status, sponsorship need.
+- **compensation (OPTIONAL — give market context before asking)** — first, run a quick WebSearch for the current average compensation for their primary archetype + level + location, and share the range in one line with a "rough public numbers" caveat. Then ask whether they want a personal minimum on record, showing the format with varied examples: `$120k base` · `$150k total comp` · `$60/hr` · `skip`. Explain its only use: `process` and `analyze` flag JDs that post below it. Skipping is a first-class answer — blank disables comp flags entirely. If WebSearch is unavailable, drop the market context and move on; never block onboarding on it.
+- **visa (ask ONLY when the CV suggests it)** — don't ask by default. If the CV shows education or work experience outside the country they're searching in, ask once, plainly: "Do you need visa sponsorship? I only use this to flag JDs that say they won't sponsor." Record it in the `visa:` block. If nothing in the CV suggests it and they don't raise it themselves, leave `visa.status` blank — blank means rolecraft never raises the topic.
 
 ## Step 3 — Proof points (optional) → `user/profile/article-digest.md`
 
