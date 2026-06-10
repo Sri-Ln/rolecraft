@@ -4,11 +4,11 @@ rolecraft is built by a small collaboration between a human author and an AI col
 
 ## Primary author
 
-**Sri-Ln** ([github.com/Sri-Ln](https://github.com/Sri-Ln)) — design, direction, all final decisions, and code review on every commit.
+**Srikanth Lakshminarayan** ([github.com/Sri-Ln](https://github.com/Sri-Ln)) — design, direction, all final decisions, and code review on every commit.
 
 ## AI collaborator
 
-**Claude** (Anthropic — Opus 4.7) — paired on design, plan-writing, drafting, and implementation. Every commit on this repository has a `Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>` trailer when Claude contributed to it.
+**Claude** (Anthropic) — paired on design, plan-writing, drafting, and implementation. Larger commits Claude contributed to carry a `Co-Authored-By: Claude <noreply@anthropic.com>` trailer (see [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 ## How we work
 
