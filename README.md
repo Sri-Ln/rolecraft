@@ -57,13 +57,13 @@ Full file-by-file rules in [`docs/DATA_CONTRACT.md`](docs/DATA_CONTRACT.md).
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — how the skill is structured
 - [`docs/HOW-TO.md`](docs/HOW-TO.md) — end-user guide
 - [`docs/DATA_CONTRACT.md`](docs/DATA_CONTRACT.md) — what's user-owned vs system-owned
-- `docs/CUSTOMIZATION.md — Phase 3`
+- [`docs/CUSTOMIZATION.md`](docs/CUSTOMIZATION.md) — make rolecraft yours
 - [`docs/ONBOARDING.md`](docs/ONBOARDING.md) — what onboarding asks and why
 - `docs/PUBLISHING.md — Phase 5`
 
 ## Status
 
-Phase 2 of 5 complete: the core loop is live. Onboard, process a JD, or run a one-off analysis. Breadth modes land in Phase 3. See [`docs/superpowers/plans/`](docs/superpowers/plans/) for the implementation plans of each phase.
+Phase 3 of 5 complete: all everyday modes are live. Still to come: markdown reports (Phase 4) and the update mechanism (Phase 5). See [`docs/superpowers/plans/`](docs/superpowers/plans/) for the implementation plans of each phase.
 
 ## License
 

@@ -39,4 +39,4 @@ Every file onboarding creates is yours to edit directly:
 - `user/profile/_profile.md` — framing, narrative, deal-breakers
 - `user/profile/article-digest.md` — proof points and STAR stories
 
-Or re-run `/rolecraft onboard` and pick the file to revisit. After significant changes, `/rolecraft recurate` (Phase 3) re-ranks your existing trackers against the new targets.
+Or re-run `/rolecraft onboard` and pick the file to revisit. After significant changes, `/rolecraft recurate` re-ranks your existing trackers against the new targets.

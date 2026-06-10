@@ -52,11 +52,10 @@ Create missing directories (`user/data/`, `user/profile/writing-samples/`) with 
 
 ## Mode availability
 
-Phase 2 ships three modes: `onboard`, `process`, `analyze`. If the dispatched mode's file doesn't exist under `modes/`, don't improvise it. Tell the user which phase it arrives in and list what works today:
+Available today: `onboard`, `process`, `analyze`, `concepts`, `stack`, `projects`, `companies`, `dashboard`, `profile`, `recurate`, `clear`. If the dispatched mode's file doesn't exist under `modes/`, don't improvise it. Tell the user which phase it arrives in:
 
 | Mode | Arrives in |
 |---|---|
-| `concepts`, `stack`, `projects`, `companies`, `dashboard`, `profile`, `recurate`, `clear` | Phase 3 |
 | `report` | Phase 4 |
 | `update` | Phase 5 |
 

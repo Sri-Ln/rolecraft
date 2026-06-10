@@ -24,7 +24,7 @@ The first time you invoke any rolecraft mode (or open a Claude Code session afte
 5. Personalization round (free-form context that makes the skill smarter)
 6. Confirmation
 
-Everything onboarding asks goes into `user/profile/`. You can edit those files directly any time — see `docs/CUSTOMIZATION.md` (Phase 3).
+Everything onboarding asks goes into `user/profile/`. You can edit those files directly any time — see [`CUSTOMIZATION.md`](CUSTOMIZATION.md).
 
 ## Daily flow
 
@@ -42,7 +42,7 @@ After each run, look at `user/data/dashboard.md` for the current state of your r
 
 ## Customizing
 
-- Change target roles / industries / comp: `/rolecraft profile` (Phase 3), or edit `user/profile/profile.yml` directly
+- Change target roles / industries / comp: `/rolecraft profile`, or edit `user/profile/profile.yml` directly
 - Change framing / narrative / deal-breakers: edit `user/profile/_profile.md`
 - Add proof points: edit `user/profile/article-digest.md`
 - Update CV: edit `user/profile/cv.md`
@@ -51,7 +51,7 @@ After significant profile changes, run `/rolecraft recurate` to re-rank existing
 
 ## Wiping data
 
-- `/rolecraft clear` (Phase 3) — confirmation-gated wipe of `user/data/` only. Keeps your identity.
+- `/rolecraft clear` — confirmation-gated wipe of `user/data/` only. Keeps your identity.
 - Manual full reset: `rm -rf user/` then re-run any mode (re-triggers `onboard`).
 
 ## Updating the skill
