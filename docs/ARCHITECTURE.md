@@ -36,7 +36,7 @@ See `docs/DATA_CONTRACT.md` for the file-by-file ownership rules.
 3. SKILL.md instructs Claude to load `AGENTS.md` (voice, dispatch, data contract), then `modes/_shared.md` (sources of truth, onboarding check, common rules), then `modes/<target>.md` (the specific mode's instructions).
 4. The mode reads `user/profile/*` (always) and the relevant `user/data/*` files (mode-specific), executes its work, writes results to the appropriate user-layer files.
 
-The first-run onboarding check runs silently on every session start. `AGENTS.md` specifies the first-run check logic; `modes/_shared.md` (Phase 2) becomes the operational location. If `user/profile/profile.yml`, `user/profile/cv.md`, or `user/profile/_profile.md` is missing, the user is routed to `onboard` before any other mode can execute.
+The first-run onboarding check runs silently on every session start. `AGENTS.md` specifies the first-run check logic; `modes/_shared.md` is the operational location. If `user/profile/profile.yml`, `user/profile/cv.md`, or `user/profile/_profile.md` is missing, the user is routed to `onboard` before any other mode can execute.
 
 ## Adding a new mode
 

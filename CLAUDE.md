@@ -7,7 +7,7 @@ Key pointers:
 - Plugin manifest: `.claude-plugin/plugin.json`
 - Marketplace catalog: `.claude-plugin/marketplace.json`
 - Skill entry: `skills/rolecraft/SKILL.md`
-- Modes: `modes/` (created in Phase 2)
+- Modes: `modes/` (`_shared`, `onboard`, `process`, `analyze`; breadth modes in Phase 3)
 - User data (gitignored): `user/profile/` (identity / source of truth) and `user/data/` (skill-generated outputs)
 - Architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - Data contract: [`docs/DATA_CONTRACT.md`](docs/DATA_CONTRACT.md)
