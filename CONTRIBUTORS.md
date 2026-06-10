@@ -8,7 +8,7 @@ rolecraft is built by a small collaboration between a human author and an AI col
 
 ## AI collaborator
 
-**Claude** (Anthropic) — paired on design, plan-writing, drafting, and implementation. Larger commits Claude contributed to carry a `Co-Authored-By: Claude <noreply@anthropic.com>` trailer (see [CONTRIBUTING.md](CONTRIBUTING.md)).
+**Claude** (Anthropic) — paired on design, plan-writing, drafting, and implementation.
 
 ## How we work
 
