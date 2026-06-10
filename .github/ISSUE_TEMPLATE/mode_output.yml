@@ -1,0 +1,38 @@
+name: Mode output quality
+description: A mode ran fine, but its output was wrong, generic, or unhelpful
+labels: ["mode-behavior"]
+body:
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Which mode?
+      options:
+        - onboard
+        - process
+        - analyze
+        - concepts
+        - stack
+        - projects
+        - companies
+        - dashboard
+        - profile
+        - recurate
+        - clear
+    validations:
+      required: true
+  - type: textarea
+    id: got
+    attributes:
+      label: What did it produce?
+      description: >-
+        Paste or describe the problematic output. Redact anything personal —
+        company names and JD snippets are usually fine, your profile data is not.
+    validations:
+      required: true
+  - type: textarea
+    id: wanted
+    attributes:
+      label: What would good output have looked like?
+      description: e.g. "suggested a niche project instead of a CRUD demo", "shouldn't recommend resources for things marked 🎓"
+    validations:
+      required: true
