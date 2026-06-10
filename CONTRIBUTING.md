@@ -14,7 +14,7 @@ Any merge that changes plugin content is a release:
 
 - Bump the version everywhere it lives: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `skills/rolecraft/SKILL.md` frontmatter, `VERSION` (installed copies only refetch on a version change)
 - Add a `CHANGELOG.md` entry: one-line summary first (update notices show only that), categorized details underneath
-- Tag the merge commit `vX.Y.Z` and create a GitHub release with the changelog summary as the notes
+- Minor releases only (`0.x.0`, `1.0.0` — phase completions and feature milestones): tag the merge commit `vX.Y.0` and create a GitHub release with the changelog summary as the notes. Patch bumps get a changelog entry but no tag.
 - Run `claude plugin validate .` before merging
 
 ## Testing changes to modes

@@ -1,7 +1,7 @@
 ---
 name: rolecraft
 description: JD-driven study companion. Paste a job description; get back what to study, what to build, and where else this role exists. Use when the user pastes a job description, says "process this", asks "what would this role take", or wants concepts, tech stacks, companies, projects, or a dashboard summary derived from past JDs.
-version: 0.3.3
+version: 0.3.4
 user-invocable: true
 argument-hint: <mode>
 ---
