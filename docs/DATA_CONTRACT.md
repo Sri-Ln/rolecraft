@@ -57,4 +57,4 @@ This guarantees `update` mode never overwrites personalization.
 - `rm -rf user/profile/*` → forgets identity, retriggers onboarding. "I want to be someone else."
 - `rm -rf user/` → both of the above.
 
-The `clear` mode (Phase 3) provides a confirmation-gated way to do the first.
+The `clear` mode provides a confirmation-gated way to do the first.

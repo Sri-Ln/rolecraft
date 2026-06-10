@@ -25,4 +25,4 @@ Never write user-specific content to the System Layer. All personalization goes 
 
 ## Status
 
-Phase 2 of 5. The core loop is live: `onboard`, `process`, and `analyze` work end-to-end. Breadth modes (`concepts`, `stack`, `projects`, `companies`, `dashboard`, `profile`, `recurate`, `clear`) land in Phase 3; `report` in Phase 4; `update` in Phase 5. Invoking a not-yet-shipped mode tells you which phase it arrives in. See `docs/superpowers/plans/` for the per-phase implementation plans.
+Phase 3 of 5. All everyday modes are live: `onboard`, `process`, `analyze`, plus the breadth modes (`concepts`, `stack`, `projects`, `companies`, `dashboard`, `profile`, `recurate`, `clear`). Still to come: `report` (Phase 4) and `update` (Phase 5). See `docs/superpowers/plans/` for the per-phase implementation plans.
