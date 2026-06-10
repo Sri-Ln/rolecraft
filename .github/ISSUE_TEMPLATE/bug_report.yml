@@ -1,0 +1,53 @@
+name: Bug report
+description: Something broke — install, update, or a mode erroring out
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where did it go wrong?
+      options:
+        - Install / update
+        - onboard
+        - process
+        - analyze
+        - concepts
+        - stack
+        - projects
+        - companies
+        - dashboard
+        - profile
+        - recurate
+        - clear
+        - Docs
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: rolecraft version
+      description: From `/plugin list`, or the `VERSION` file if you cloned
+      placeholder: "0.3.4"
+    validations:
+      required: true
+  - type: dropdown
+    id: install-method
+    attributes:
+      label: How is rolecraft installed?
+      options:
+        - Marketplace (/plugin install)
+        - Git clone
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: >-
+        What you did, what you expected, what you got instead.
+        ⚠️ Please don't paste contents of your `user/` directory — that's your
+        personal data and this issue is public.
+    validations:
+      required: true

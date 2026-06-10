@@ -1,0 +1,31 @@
+name: Feature request
+description: Something rolecraft should learn to do
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's the problem or gap?
+      description: What are you trying to do that rolecraft doesn't support (or makes harder than it should be)?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like to happen?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of rolecraft?
+      options:
+        - Onboarding
+        - Processing JDs
+        - Trackers / output files
+        - Reports
+        - Install / update
+        - A new mode
+        - Other
+    validations:
+      required: true
