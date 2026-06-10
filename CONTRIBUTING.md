@@ -8,12 +8,6 @@ Workflow rules for this repo. They apply to human contributors and agent session
 - One branch per phase/feature, cut from `main`, deleted after merge
 - Implementation plans go in `docs/superpowers/plans/` before execution; match the structure of the existing phase plans there
 
-## Commits
-
-- Single-line subject, no body; write naturally and avoid repeating templated prefixes across commits
-- Small commits (1–2 files): author attribution only
-- Larger commits (3+ files): add a `Co-Authored-By` trailer for AI collaborators
-
 ## Testing changes to modes
 
 - Smoke-test with a synthetic persona under gitignored `user/` — never real personal data
