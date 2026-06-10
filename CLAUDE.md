@@ -13,5 +13,6 @@ Key pointers:
 - Data contract: [`docs/DATA_CONTRACT.md`](docs/DATA_CONTRACT.md)
 - Customization guide: [`docs/CUSTOMIZATION.md`](docs/CUSTOMIZATION.md)
 - End-user guide: [`docs/HOW-TO.md`](docs/HOW-TO.md)
+- Git workflow & commit conventions: [`CONTRIBUTING.md`](CONTRIBUTING.md)
 
 Personal customization (target roles, framing, deal-breakers, comp targets) goes in `user/profile/_profile.md` and `user/profile/profile.yml`. Never edit System Layer files for user-specific content — see `docs/DATA_CONTRACT.md` for the full rule.
