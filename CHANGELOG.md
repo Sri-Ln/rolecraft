@@ -2,6 +2,10 @@
 
 Each release leads with a one-line summary — update notices show only that line. Finer details are tracked underneath, categorized, for anyone who wants them.
 
+## 0.3.4 — 2026-06-10
+
+Release policy refined: tags and GitHub releases for minor versions only.
+
 ## 0.3.3 — 2026-06-10
 
 rolecraft now tells you when a new version is available.
