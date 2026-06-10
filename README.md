@@ -19,7 +19,7 @@ Designed for engineers who treat a job search as a study plan, not an applicatio
 /plugin install rolecraft
 ```
 
-That's it. The skill runs onboarding automatically on first use — see `docs/ONBOARDING.md — Phase 2` for what it asks and why.
+That's it. The skill runs onboarding automatically on first use — see [`docs/ONBOARDING.md`](docs/ONBOARDING.md) for what it asks and why.
 
 ## Quick start
 
@@ -58,12 +58,12 @@ Full file-by-file rules in [`docs/DATA_CONTRACT.md`](docs/DATA_CONTRACT.md).
 - [`docs/HOW-TO.md`](docs/HOW-TO.md) — end-user guide
 - [`docs/DATA_CONTRACT.md`](docs/DATA_CONTRACT.md) — what's user-owned vs system-owned
 - `docs/CUSTOMIZATION.md — Phase 3`
-- `docs/ONBOARDING.md — Phase 2`
+- [`docs/ONBOARDING.md`](docs/ONBOARDING.md) — what onboarding asks and why
 - `docs/PUBLISHING.md — Phase 5`
 
 ## Status
 
-Phase 1 of 5 complete: scaffolding and data migration. The skill is not yet functional — modes land in Phase 2. See [`docs/superpowers/plans/`](docs/superpowers/plans/) for the implementation plans of each phase.
+Phase 2 of 5 complete: the core loop is live. Onboard, process a JD, or run a one-off analysis. Breadth modes land in Phase 3. See [`docs/superpowers/plans/`](docs/superpowers/plans/) for the implementation plans of each phase.
 
 ## License
 

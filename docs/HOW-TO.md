@@ -13,7 +13,7 @@ You can verify it installed with `/plugin list`.
 
 ## First-run onboarding
 
-(Exact onboarding steps land in Phase 2; the flow below reflects current design intent and may evolve.)
+Full detail on every step: [`ONBOARDING.md`](ONBOARDING.md).
 
 The first time you invoke any rolecraft mode (or open a Claude Code session after installing), rolecraft notices `user/profile/` is empty and runs `onboard` automatically. The flow asks for:
 

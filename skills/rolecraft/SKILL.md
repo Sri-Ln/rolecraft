@@ -25,4 +25,4 @@ Never write user-specific content to the System Layer. All personalization goes 
 
 ## Status
 
-Phase 1 of 5. The plugin scaffolding is in place but no mode files exist yet — `modes/_shared.md` and `modes/<mode>.md` referenced above are created in Phase 2. **The skill is not functional until Phase 2 lands.** If you invoke `/rolecraft` against this version, you'll hit a missing-file error on the dispatch step above. See `docs/superpowers/plans/` for the per-phase implementation plans.
+Phase 2 of 5. The core loop is live: `onboard`, `process`, and `analyze` work end-to-end. Breadth modes (`concepts`, `stack`, `projects`, `companies`, `dashboard`, `profile`, `recurate`, `clear`) land in Phase 3; `report` in Phase 4; `update` in Phase 5. Invoking a not-yet-shipped mode tells you which phase it arrives in. See `docs/superpowers/plans/` for the per-phase implementation plans.
