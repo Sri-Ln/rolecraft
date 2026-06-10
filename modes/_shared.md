@@ -59,6 +59,17 @@ Available today: `onboard`, `process`, `analyze`, `concepts`, `stack`, `projects
 | `report` | Phase 4 |
 | `update` | Phase 5 |
 
+## Update check (silent, best-effort, never blocking)
+
+Once per session, AFTER completing the user's first request — never before it, never blocking it:
+
+1. Fetch `https://raw.githubusercontent.com/Sri-Ln/rolecraft/main/VERSION`. If the fetch fails for any reason, skip silently — never mention a failed check.
+2. Compare against the local `VERSION` file at the plugin root. If the remote version is newer, append a short notice to the end of your reply:
+   - the new version number and the installed one
+   - what changed: fetch `CHANGELOG.md` from the same branch and quote ONLY the one-line summary of each version between the installed and remote ones — never the detailed bullets. The user wants a glance, not release archaeology.
+   - the exact update steps: `/plugin marketplace update rolecraft`, then update rolecraft from the `/plugin` menu, then restart the session
+3. Mention it once per session, not on every reply. Never auto-apply anything — updating is the user's action.
+
 ## Shared conventions
 
 **Markers** (used in `user/data/concepts.md` and `user/data/stack-tracker.md`):

@@ -8,6 +8,15 @@ Workflow rules for this repo. They apply to human contributors and agent session
 - One branch per phase/feature, cut from `main`, deleted after merge
 - Implementation plans go in `docs/superpowers/plans/` before execution; match the structure of the existing phase plans there
 
+## Releases
+
+Any merge that changes plugin content is a release:
+
+- Bump the version everywhere it lives: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `skills/rolecraft/SKILL.md` frontmatter, `VERSION` (installed copies only refetch on a version change)
+- Add a `CHANGELOG.md` entry: one-line summary first (update notices show only that), categorized details underneath
+- Tag the merge commit `vX.Y.Z` and create a GitHub release with the changelog summary as the notes
+- Run `claude plugin validate .` before merging
+
 ## Testing changes to modes
 
 - Smoke-test with a synthetic persona under gitignored `user/` — never real personal data
