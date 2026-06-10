@@ -22,8 +22,9 @@ After changes that affect ranking — archetypes, industries, deal-breakers, pri
 | `archetypes[].fit` (`primary`/`secondary`/`adjacent`) | How strongly a match counts in ranking and verdicts. |
 | `industries.mode` (`match`/`any`) | `match` filters companies and shapes projects to the listed industries; `any` (or a `*` entry) matches on title alone. |
 | `industries.sub_sectors` | Sharpen company discovery and project framing within an industry. |
-| `compensation.minimum` | Comp flags in `process`/`analyze` reports. |
-| `location.*`, `needs_sponsorship` | Location/visa flags in reports. |
+| `compensation.minimum` | Optional. Comp flags in `process`/`analyze` reports; blank disables them. |
+| `location.*` | Location notes in reports. |
+| `visa.*` | Optional. Sponsorship flags in reports; blank means the topic never comes up. |
 | `settings.dashboard_top_n_per_category` | How long each dashboard section is. |
 | `settings.auto_pdf_score_threshold` | Reserved for Phase 5 PDF reports. |
 

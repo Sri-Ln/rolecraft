@@ -12,7 +12,7 @@ What rolecraft asks when you first install it, why it asks, and where your answe
 | Step | What it asks | Where it goes | Skippable? |
 |---|---|---|---|
 | 1. CV | Paste your CV, paste LinkedIn text, or describe your experience and rolecraft drafts one for your correction | `user/profile/cv.md` | No — this is the canonical source for everything else |
-| 2. Identity & targets | Name, contact, links. Target role archetypes (with suggested synonyms), industries (or "any"), comp range, location, visa | `user/profile/profile.yml` | No, but comp/links can stay blank |
+| 2. Identity & targets | Name, contact, links. Location (prefilled from your CV if you want). Target role archetypes (with suggested synonyms), industries (or "any"). Compensation and visa are optional — see below | `user/profile/profile.yml` | Comp and visa fully skippable; links can stay blank |
 | 3. Proof points | The most impressive thing you've shipped, turned into interview-ready material | `user/profile/article-digest.md` | Yes — a placeholder file is created either way |
 | 4. Framing & narrative | Hero pitch, what to emphasize per archetype, energy/drain mapping, deal-breakers, things you already know cold, things you must never be described as | `user/profile/_profile.md` | No — this shapes every recommendation |
 | 5. Personalization | Free-form: what makes you unique, published work, certs | Appended to `_profile.md` / `article-digest.md` | Yes |
@@ -25,6 +25,8 @@ What rolecraft asks when you first install it, why it asks, and where your answe
 - **Industries** control company suggestions and project framing. "Any" is a first-class choice — early-career or industry-agnostic searches match on title alone.
 - **Prior domain knowledge** is what keeps the concepts tracker honest: things you already know get a 🎓 marker and never show up as study recommendations.
 - **Deal-breakers** flag JDs immediately, no matter how good the title match looks.
+- **Compensation and visa are fit-flags, not learning inputs.** rolecraft is a study companion and never needs either to build your learning radar. If you record a comp minimum, JDs posting below it get flagged; if you record a sponsorship need, JDs that won't sponsor get flagged. Leave both blank and the topics never come up. Visa is only asked about at all when your CV suggests it might be relevant.
+- **Market context before numbers.** Before asking about compensation, onboarding shows the going rate for your target title and location (a quick public search, rough numbers). Internship and co-op experience maps to the full-time title you'd actually enter as — a software engineering co-op is shown Software Engineer I/II numbers, not intern numbers.
 
 ## Privacy
 
