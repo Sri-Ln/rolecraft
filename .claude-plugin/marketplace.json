@@ -1,15 +1,24 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "rolecraft",
   "owner": {
     "name": "Sri-Ln",
     "url": "https://github.com/Sri-Ln"
   },
-  "description": "Personal marketplace for rolecraft and any future Sri-Ln Claude Code skills.",
+  "metadata": {
+    "description": "Personal marketplace for rolecraft and any future Sri-Ln Claude Code skills."
+  },
   "plugins": [
     {
       "name": "rolecraft",
       "source": "./",
       "description": "JD-driven study companion. Paste a job description; get back what to study, what to build, and where else this role exists.",
+      "version": "0.3.0",
+      "author": {
+        "name": "Sri-Ln",
+        "url": "https://github.com/Sri-Ln"
+      },
+      "homepage": "https://github.com/Sri-Ln/rolecraft",
       "category": "productivity",
       "keywords": ["career", "learning", "job-description", "study-plan"]
     }
