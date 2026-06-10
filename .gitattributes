@@ -1,0 +1,20 @@
+# Default: normalize all text files to LF on commit; check out with native line endings.
+* text=auto
+
+# Always LF for shell scripts and JS modules (they may run in Linux containers / CI)
+*.sh   text eol=lf
+*.mjs  text eol=lf
+*.js   text eol=lf
+*.json text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+
+# Markdown stays LF for consistent diffs across contributors
+*.md   text eol=lf
+
+# Binary files Git should never try to merge or convert
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.ico  binary
