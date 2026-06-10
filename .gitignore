@@ -1,0 +1,15 @@
+# OS / editor
+.DS_Store
+*.log
+
+# Secrets
+.env
+
+# Claude Code session state (NOT .claude-plugin/, which is tracked)
+.claude/
+
+# Node.js (Phase 4+)
+node_modules/
+
+# User layer — never committed
+/user/

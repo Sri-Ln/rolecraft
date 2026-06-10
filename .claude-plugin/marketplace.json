@@ -1,0 +1,17 @@
+{
+  "name": "rolecraft",
+  "owner": {
+    "name": "Sri-Ln",
+    "url": "https://github.com/Sri-Ln"
+  },
+  "description": "Personal marketplace for rolecraft and any future Sri-Ln Claude Code skills.",
+  "plugins": [
+    {
+      "name": "rolecraft",
+      "source": "./",
+      "description": "JD-driven study companion. Paste a job description; get back what to study, what to build, and where else this role exists.",
+      "category": "productivity",
+      "keywords": ["career", "learning", "job-description", "study-plan"]
+    }
+  ]
+}

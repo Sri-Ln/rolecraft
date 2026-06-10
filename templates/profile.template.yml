@@ -1,0 +1,52 @@
+# rolecraft profile configuration
+# Copied to user/profile/profile.yml on first run.
+# Onboarding (/rolecraft onboard) fills in [PLACEHOLDER] values interactively.
+# You can also edit this file directly at any time.
+
+candidate:
+  full_name: "[PLACEHOLDER]"
+  email: "[PLACEHOLDER]"
+  location: "[PLACEHOLDER]"
+  linkedin: "[PLACEHOLDER]"
+  github: "[PLACEHOLDER]"
+  portfolio: "[PLACEHOLDER]"
+
+# Target archetypes drive how rolecraft matches JD titles and ranks suggestions.
+# Each archetype has a canonical name plus optional synonyms (phrasing variants
+# that appear in real JDs). Add synonyms as you encounter them in the wild.
+target_roles:
+  archetypes:
+    - canonical: "[PLACEHOLDER]"
+      synonyms: []
+      level: "[PLACEHOLDER]"   # Entry | Mid | Senior | Staff | Principal
+      fit: "primary"            # primary | secondary | adjacent
+
+# Industries control which sectors rolecraft considers in the `companies` mode
+# and how it shapes project recommendations.
+# mode: "match"  - filter to industries listed below
+# mode: "any"    - disable filter, match on title alone (good for early career
+#                  or when you're industry-agnostic)
+industries:
+  mode: "match"
+  list:
+    - "[PLACEHOLDER]"
+  sub_sectors: {}             # e.g.  Finance: ["Treasury Tech", "Electronic Trading"]
+
+compensation:
+  target_range: "[PLACEHOLDER]"
+  minimum: "[PLACEHOLDER]"
+  currency: "USD"
+
+location:
+  preferred: []
+  open_to: []
+  visa_status: "[PLACEHOLDER]"
+  needs_sponsorship: false
+
+# Skill behavior settings.
+# auto_pdf_score_threshold: minimum match score (0–5 scale) for a JD to trigger PDF
+#   report generation. Phase 5 feature; no effect until then.
+# dashboard_top_n_per_category: how many items to show per category in the dashboard.
+settings:
+  auto_pdf_score_threshold: 3.5
+  dashboard_top_n_per_category: 5

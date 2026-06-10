@@ -1,0 +1,21 @@
+{
+  "name": "rolecraft",
+  "version": "0.1.0",
+  "description": "JD-driven study companion. Paste a job description; get back what to study, what to build, and where else this role exists.",
+  "author": {
+    "name": "Sri-Ln",
+    "url": "https://github.com/Sri-Ln"
+  },
+  "homepage": "https://github.com/Sri-Ln/rolecraft",
+  "repository": "https://github.com/Sri-Ln/rolecraft",
+  "license": "MIT",
+  "keywords": ["career", "learning", "job-description", "study-plan", "fintech"],
+  "skills": true,
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "WebFetch",
+      "WebSearch"
+    ]
+  }
+}
