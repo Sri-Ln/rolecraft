@@ -59,16 +59,20 @@ Available today: `onboard`, `process`, `analyze`, `concepts`, `stack`, `projects
 | `report` | Phase 4 |
 | `update` | Phase 5 |
 
+## Orchestration (keep the chat clean)
+
+When the platform supports dispatching subagents, modes that write multiple files (`process`, `recurate`) hand the parsing and file writes to a subagent and keep the main thread for the final report: one short line up front about what's happening, then the verdict. Slices that write independent files may run as parallel subagents; regenerate the dashboard only after they all finish. On platforms without subagents, do the work inline but keep narration minimal — don't walk the user through every file write.
+
 ## Update check (silent, best-effort, never blocking)
 
 Once per session, AFTER completing the user's first request — never before it, never blocking it:
 
-1. Fetch `https://raw.githubusercontent.com/Sri-Ln/rolecraft/main/VERSION`. If the fetch fails for any reason, skip silently — never mention a failed check.
+1. Fetch `https://raw.githubusercontent.com/Sri-Ln/rolecraft/main/VERSION` using WebFetch ONLY — never shell commands (no curl, no Invoke-WebRequest), and never inspect or compare plugin cache directories. If the fetch fails or WebFetch is unavailable, skip silently — never mention a failed check.
 2. Compare against the local `VERSION` file at the plugin root. If the remote version is newer, append a short notice to the end of your reply:
    - the new version number and the installed one
    - what changed: fetch `CHANGELOG.md` from the same branch and quote ONLY the one-line summary of each version between the installed and remote ones — never the detailed bullets. The user wants a glance, not release archaeology.
    - the exact update steps: `/plugin marketplace update rolecraft`, then update rolecraft from the `/plugin` menu, then restart the session
-3. Mention it once per session, not on every reply. Never auto-apply anything — updating is the user's action.
+3. Mention it once per session, not on every reply. Never announce that a check is running, ran, or found the user up to date — speak only when a newer version exists. Never auto-apply anything — updating is the user's action.
 
 ## Shared conventions
 
@@ -80,7 +84,7 @@ Once per session, AFTER completing the user's first request — never before it,
 
 **Previous-rank blocks.** `concepts.md` and `stack-tracker.md` end with an HTML comment block recording each item's rank from the previous run. Read it to compute Δ markers; rewrite it after re-ranking so the next run can diff. Never surface the block's contents in chat.
 
-**Multiple JDs.** One inbox paste may hold several JDs separated by a line containing exactly `---NEW JOB---`. Process each separately, then merge results into the trackers.
+**Multiple JDs.** One inbox paste may hold several JDs separated by a line containing exactly `---NEW JOB---`. Process each separately, then merge results into the trackers. That marker is the ONLY automatic split: if a paste has no marker but reads like more than one role, ask the user whether to treat it as one JD or several — never split on content judgment alone.
 
 **Archetype matching.** Match JD titles against `target_roles.archetypes` in `profile.yml` using canonical names AND synonyms. Respect `industries.mode`: `"match"` filters to the listed industries; `"any"` (or a `"*"` list entry) matches on title alone. When a JD matches no archetype, say so plainly and ask whether to proceed — never silently force a fit.
 

@@ -2,6 +2,20 @@
 
 Each release leads with a one-line summary — update notices show only that line. Finer details are tracked underneath, categorized, for anyone who wants them.
 
+## 0.3.5 — 2026-06-12
+
+Cleaner processing: tables for trackers, smarter companies and projects, quieter runs.
+
+**Improvements**
+- Concepts and stack trackers are single scannable tables now
+- Companies: real employers only, with careers-page links; anonymous recruiter postings stay out of the file; similar-company discovery stays in `/rolecraft companies`
+- Projects: suggestions wait until 3 JDs are processed, extend-vs-new is decided by tech type (competitor swaps don't count), and table rows anchor-link to their log entries
+- Multi-role pastes: rolecraft asks before splitting — only the `---NEW JOB---` marker splits automatically
+- Multi-file modes run in a subagent when the platform supports it, keeping the chat to one status line and the report
+
+**Fixes**
+- Update check pinned to WebFetch only (no shell commands, no cache inspection) and fully silent unless a newer version exists
+
 ## 0.3.4 — 2026-06-10
 
 Release policy refined: tags and GitHub releases for minor versions only.

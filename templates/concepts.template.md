@@ -7,7 +7,8 @@
 > 🔥 = currently in the top 3 by JD demand
 > **Δ legend:** 🟢 ▲ N up · 🔴 ▼ N down · ⚪ — unchanged · 🆕 new this run
 
----
+| # | Concept | Why it matters | Free sources |
+|---|---|---|---|
 
 _No concepts tracked yet. Process a JD with `/rolecraft` to start._
 

@@ -15,7 +15,7 @@ Priority order:
 
 ## 2. Split and parse
 
-Split the input on lines containing exactly `---NEW JOB---`; each segment is one JD. For each JD extract:
+Split the input on lines containing exactly `---NEW JOB---`; each segment is one JD. That marker is the only automatic split — if the paste has no marker but looks like it describes more than one role, ask the user ("this reads like two distinct roles — process as two, or treat as one?") before splitting. For each JD extract:
 
 - Company, title, location/remote policy, posted comp (if any)
 - Must-have requirements vs nice-to-haves
@@ -38,25 +38,28 @@ Append one entry per JD: heading `## YYYY-MM-DD — Company — Title`, then the
 4. Each non-🎓 concept keeps 1–2 curated FREE sources (docs, talks, university notes — no paywalls).
 5. Apply Δ markers vs the previous-rank block; mark the top 3 with 🔥; mark new entries 🆕.
 6. Rewrite the previous-rank comment block at the bottom with this run's ranks.
+7. Keep the file as ONE ranked table — `| # | Concept | Why it matters | Free sources |` — with rank, Δ, and 🔥/🎓 markers together in the `#` cell (e.g. `3 🔥 🆕`). No flat lists.
 
 ## 5. Tech stack → `user/data/stack-tracker.md`
 
-Same mechanics as concepts, but grouped by category (Languages / Frameworks / Tools / Methodologies / Infra) and ranked within each category by occurrence count across all processed JDs. Update each category's section and the previous-rank block. Replace `_No X tracked yet._` placeholders as categories gain entries.
+Same mechanics as concepts, but ranked within each category (Languages / Frameworks / Tools / Methodologies / Infra) by occurrence count across all processed JDs. Keep the file as ONE table — `| Category | Technology | Demand | Δ |` — rows grouped by category, ranked within each group; 🎓 marks tech the user already knows. Update the previous-rank block after re-ranking.
 
 ## 6. Projects → `user/data/projects-index.md`
 
-Append one entry to the Suggestion log per run: date, JDs processed, and the suggestion made.
-
-- If this is the first JD overall: suggest one project grounded in this JD's domain.
-- With ≥2 JDs processed all-time: decide **extend an existing suggested project** (when the new JD's demands overlap an existing project's stack/domain) **vs propose a new one** (when it opens a genuinely different axis). Say which you chose and why.
-- Every suggestion must be niche and business-aware: name the business problem it models, the MVP scope, a rough timeline, and the JD-demanded tech it exercises. Never a generic CRUD demo or to-do app.
-- Add new projects to the table with status `idea`; never change the status of rows the user has touched.
+- **Fewer than 3 JDs processed all-time → no suggestion.** Write nothing to the file; note the count in the report ("2/3 JDs — project suggestions start at 3"). Patterns first, projects after.
+- **3+ JDs → suggest from the PATTERN across all JDs, not the latest one alone.** Pick the tech and domain concepts that cover the most demanded ground with one coherent build that models a real business process — never bake every technology into one demo.
+- **Extend vs new is decided by tech TYPE** (messaging queue, cache layer, serverless functions, stream processing, front-end framework…). Competitor swaps within a type (Angular↔React, Kafka↔Solace) are NOT new types — note the alternative in the existing project's row. A genuinely new type: first try fitting it into an existing project as an add-on milestone; open a new project only when it can't reasonably fit. Say which you chose and why.
+- Every suggestion: the business problem it models, MVP scope, rough timeline, demanded tech exercised. Never a generic CRUD demo or to-do app.
+- New projects enter the table with status `idea`; never change statuses the user has set. The Project cell in the table is an anchor link to the project's heading in the Suggestion log so summary and detail stay connected.
 
 ## 7. Companies → `user/data/companies.md`
 
-Add the hiring company plus any companies explicitly named in the JD (competitors, clients, partners). Dedupe by company name. Respect the industries filter from `profile.yml`. Columns: Company, Industry, Sub-sector, Relevant roles, Source JD, Notes.
-
-(Similar-company discovery via WebSearch is the Phase 3 `companies` mode — `process` only records what the JD itself reveals.)
+- If the JD names the actual hiring company, add ONE row: industry, sub-sector, role, careers page (a role-filtered search URL when the company's site supports it, otherwise the careers root), notes.
+- Anonymous postings (recruiter blobs, "a Tier 1 bank") get NO row — placeholder rows aren't targets. Put what's known, and what to ask the recruiter, in the chat report instead.
+- Companies merely name-dropped in the JD (partners, clients, competitors) are not targets — skip them.
+- Dedupe by company name: a company appears at most once in the file, ever.
+- Columns: Company, Industry, Sub-sector, Relevant roles, Careers, Source, Notes.
+- Similar-company discovery (WebSearch) belongs to `/rolecraft companies` — point the user there in the report, don't run it here.
 
 ## 8. Consolidated JD → `user/data/consolidated-jd.md`
 
@@ -96,5 +99,8 @@ If the input came from `user/data/inbox.md`, reset it to the exact contents of `
 Brief, calm summary in chat:
 
 - Per JD: match verdict (which archetype, via canonical or synonym), deal-breaker flags, comp/visa notes.
-- Aggregate: biggest movers in concepts and stack (use the Δ markers), the project suggestion made, files updated.
+- Aggregate: biggest movers in concepts and stack (use the Δ markers), the project suggestion made (or the JD count toward the threshold), files updated.
 - Honest about weak matches — if a JD doesn't fit the user's targets, say so instead of padding.
+- End with the natural next step — usually: "run `/rolecraft companies` to find similar teams hiring for this profile."
+
+Run this pipeline per the orchestration rule in `_shared.md`: subagent does the work, the main thread shows one status line and this report.
