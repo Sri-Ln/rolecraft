@@ -2,6 +2,13 @@
 
 Each release leads with a one-line summary — update notices show only that line. Finer details are tracked underneath, categorized, for anyone who wants them.
 
+## 0.3.6 — 2026-06-12
+
+Long runs now show live progress.
+
+**Improvements**
+- Multi-file runs render a live task checklist per pipeline stage where the platform supports it; otherwise a single expectation-setting line plus the platform spinner
+
 ## 0.3.5 — 2026-06-12
 
 Cleaner processing: tables for trackers, smarter companies and projects, quieter runs.

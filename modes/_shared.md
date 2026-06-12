@@ -63,6 +63,8 @@ Available today: `onboard`, `process`, `analyze`, `concepts`, `stack`, `projects
 
 When the platform supports dispatching subagents, modes that write multiple files (`process`, `recurate`) hand the parsing and file writes to a subagent and keep the main thread for the final report: one short line up front about what's happening, then the verdict. Slices that write independent files may run as parallel subagents; regenerate the dashboard only after they all finish. On platforms without subagents, do the work inline but keep narration minimal — don't walk the user through every file write.
 
+**Progress indication.** When the platform supports task tracking (a todo/task list the UI renders with live status), create one task per pipeline stage — e.g. parse → concepts → stack → projects → companies → consolidated JD → dashboard — and update each to in-progress/done as the run advances, with short human labels ("Updating concepts…"). That's the user's progress bar. Without task tracking, fall back to a single expectation-setting line up front ("Processing 2 JDs — this takes a couple of minutes; I'll come back with the verdict") and let the platform's own spinner carry the wait. Never emit per-stage chat lines as a substitute — that re-clutters the thread.
+
 ## Update check (silent, best-effort, never blocking)
 
 Once per session, AFTER completing the user's first request — never before it, never blocking it:
