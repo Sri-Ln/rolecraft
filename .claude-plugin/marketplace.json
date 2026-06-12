@@ -13,7 +13,7 @@
       "name": "rolecraft",
       "source": "./",
       "description": "JD-driven study companion. Paste a job description; get back what to study, what to build, and where else this role exists.",
-      "version": "0.3.5",
+      "version": "0.3.6",
       "author": {
         "name": "Srikanth Lakshminarayan",
         "url": "https://github.com/Sri-Ln"
