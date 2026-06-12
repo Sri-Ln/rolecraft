@@ -18,6 +18,7 @@ Scoped slice of `process`: update the concepts tracker and nothing else.
 4. Each non-🎓 concept keeps 1–2 curated FREE sources (docs, talks, university notes — no paywalls).
 5. Apply Δ markers vs the previous-rank block; mark the top 3 with 🔥; mark new entries 🆕.
 6. Rewrite the previous-rank comment block with this run's ranks.
+7. Keep the file as ONE ranked table — `| # | Concept | Why it matters | Free sources |` — with rank, Δ, and 🔥/🎓 markers together in the `#` cell (e.g. `3 🔥 🆕`). No flat lists.
 
 ## Report
 

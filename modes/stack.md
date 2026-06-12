@@ -12,10 +12,10 @@ Scoped slice of `process`: update the tech-stack tracker and nothing else.
 
 ## Update mechanics
 
-1. Merge new technologies into their category sections; collapse naming variants ("Postgres" / "PostgreSQL") into one entry.
+1. Merge new technologies into the table; collapse naming variants ("Postgres" / "PostgreSQL") into one entry.
 2. Rank within each category by occurrence count across everything the tracker has seen (previous-rank comment block + this run).
 3. Apply Δ markers vs the previous-rank block; mark new entries 🆕; respect 🎓 where the user already knows a technology cold.
-4. Replace `_No X tracked yet._` placeholders as categories gain entries.
+4. Keep the file as ONE table — `| Category | Technology | Demand | Δ |` — rows grouped by category (Languages / Frameworks / Tools / Methodologies / Infra), ranked within each group. No prose lists.
 5. Rewrite the previous-rank comment block with this run's ranks.
 
 ## Report
