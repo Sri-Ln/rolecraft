@@ -1,8 +1,12 @@
-# rolecraft
+# Rolecraft
+
+<div align="center">
+<img width="800" height="450" alt="banner" src="https://github.com/user-attachments/assets/af292823-bc08-486e-8eaa-887a67fb4d2b" />
+</div>
 
 > JD-driven study companion. Paste a job description; get back what to study, what to build, and where else this role exists.
 
-rolecraft is a Claude Code plugin that turns job descriptions into a focused learning radar. It accumulates signals across the JDs you actually care about and surfaces:
+Rolecraft is a Claude Code plugin that turns job descriptions into a focused learning radar. It accumulates signals across the JDs you actually care about and surfaces:
 
 - Named concepts you should study, with curated free sources
 - Tech stacks ranked by job-market demand and your current gaps
