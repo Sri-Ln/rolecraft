@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 import { splitJDs, normalize } from './ingest/index.js';
 import { tag } from './taxonomy/tag.js';
 import { appendRecord } from './archive/index.js';
@@ -31,6 +32,12 @@ function main(argv: string[]): void {
 }
 
 // Run main only when invoked directly (not when imported by tests).
-if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('cli.ts')) {
+// pathToFileURL normalizes drive letters and percent-encoding across platforms;
+// the .endsWith fallback covers the tsx loader, where argv[1] is the .ts source.
+const entry = process.argv[1];
+const invokedDirectly =
+  (entry !== undefined && import.meta.url === pathToFileURL(entry).href) ||
+  entry?.endsWith('cli.ts') === true;
+if (invokedDirectly) {
   main(process.argv.slice(2));
 }
