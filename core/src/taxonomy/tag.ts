@@ -1,55 +1,56 @@
 import { CanonicalJD, SkillBucket, SkillTag } from '../schema/index.js';
-import { VOCAB } from './vocab.js';
+
+// Anything with a canonical key and surface aliases can be matched: the seed
+// VOCAB or the user's learned cache both satisfy this shape.
+export interface Matchable {
+  canonical: string;
+  aliases: string[];
+}
 
 function escapeRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// Match an alias only on token boundaries so "go" doesn't match "gocarts"
-// and "javascript" doesn't match "javascripting". The lookbehind blocks
-// matches that are preceded by a word char, '.', or '#' (so "node" won't
-// match inside ".node_modules" or "#node"). The lookahead blocks a plain
-// word char OR a dot followed by a word char (so "node" won't match in
-// "node.js"), but a bare trailing period (sentence end) is allowed.
+// Match an alias only on token boundaries so "go" doesn't match "gocarts" and
+// "java" doesn't match "javascript". A trailing bare period is allowed
+// (e.g. "Go."), but "node.js" is not split into "node".
 function aliasRegex(alias: string): RegExp {
   return new RegExp(`(?<![\\w.#])${escapeRe(alias)}(?![\\w]|\\.[\\w])`, 'i');
 }
 
-function matchSurface(text: string): { canonical: string; surface: string }[] {
+function matchSurface(text: string, entries: Matchable[]): { canonical: string; surface: string }[] {
   const hits: { canonical: string; surface: string }[] = [];
-  for (const entry of VOCAB) {
+  for (const entry of entries) {
     for (const alias of entry.aliases) {
       const m = aliasRegex(alias).exec(text);
       if (m) {
         hits.push({ canonical: entry.canonical, surface: m[0] });
-        break; // one hit per canonical entry is enough
+        break;
       }
     }
   }
   return hits;
 }
 
-export function tag(jd: CanonicalJD): SkillTag[] {
+// Deterministic cache/seed pass: tag a JD against a list of known skills.
+export function tag(jd: CanonicalJD, entries: Matchable[]): SkillTag[] {
   const found = new Map<string, SkillTag>();
 
   const apply = (text: string | undefined, bucket: SkillBucket, allowUpgrade: boolean) => {
     if (!text) return;
-    for (const hit of matchSurface(text)) {
+    for (const hit of matchSurface(text, entries)) {
       const existing = found.get(hit.canonical);
       if (!existing) {
-        found.set(hit.canonical, { ...hit, bucket });
+        found.set(hit.canonical, { ...hit, bucket, source: 'cache' });
       } else if (allowUpgrade && existing.bucket === 'nice' && bucket === 'required') {
-        found.set(hit.canonical, { ...hit, bucket });
+        found.set(hit.canonical, { ...hit, bucket, source: 'cache' });
       }
     }
   };
 
-  // Section passes (ordered so 'required' can upgrade an earlier 'nice').
   apply(jd.sections.requirements, 'required', true);
   apply(jd.sections.responsibilities, 'required', true);
   apply(jd.sections.niceToHave, 'nice', true);
-  // Fallback: anything mentioned only in the body (no detected sections)
-  // defaults to required; never re-buckets an already-classified skill.
   apply(jd.raw, 'required', false);
 
   return [...found.values()];

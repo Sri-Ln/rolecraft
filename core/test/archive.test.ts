@@ -19,7 +19,7 @@ const rec = (id: string): JDRecord => ({
   jd: {
     id, source: 'paste', title: 'X', sections: {}, raw: 'r', capturedAt: '2026-06-20',
   },
-  tags: [{ canonical: 'java', surface: 'Java', bucket: 'required' }],
+  tags: [{ canonical: 'java', surface: 'Java', bucket: 'required', source: 'cache' }],
 });
 
 describe('archive', () => {

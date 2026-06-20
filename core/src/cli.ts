@@ -3,14 +3,17 @@ import { pathToFileURL } from 'node:url';
 import { splitJDs, normalize } from './ingest/index.js';
 import { tag } from './taxonomy/tag.js';
 import { appendRecord } from './archive/index.js';
-import { JDRecord, JDSource } from './schema/index.js';
+import { JDRecord, JDSource, SkillCache } from './schema/index.js';
+import { seedFromVocab } from './taxonomy/cache.js';
 
 const DEFAULT_STORE = 'user/data/.rolecraft/jds.jsonl';
 
-export function run(raw: string, source: JDSource = 'paste'): JDRecord[] {
+export function run(raw: string, source: JDSource = 'paste', cache?: SkillCache): JDRecord[] {
+  const effective = cache ?? seedFromVocab({});
+  const entries = Object.values(effective);
   return splitJDs(raw).map((segment) => {
     const jd = normalize(segment, source);
-    return { jd, tags: tag(jd) };
+    return { jd, tags: tag(jd, entries) };
   });
 }
 

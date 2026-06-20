@@ -20,12 +20,14 @@ export interface CanonicalJD {
   capturedAt: string; // ISO date, YYYY-MM-DD
 }
 
-export type SkillBucket = 'required' | 'nice' | 'unknown';
+export type SkillBucket = 'required' | 'nice';
+export type SkillSource = 'cache' | 'llm';
 
 export interface SkillTag {
-  canonical: string; // taxonomy key, e.g. "kubernetes"
-  surface: string;   // how it appeared, e.g. "k8s"
+  canonical: string;  // normalized key, e.g. "kubernetes"
+  surface: string;    // how it appeared, e.g. "k8s"
   bucket: SkillBucket;
+  source: SkillSource;
 }
 
 export interface CompRange {
