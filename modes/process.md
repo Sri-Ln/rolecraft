@@ -13,26 +13,41 @@ Priority order:
 2. Otherwise read `user/data/inbox.md` (seed it from the template first if missing). Content below the paste marker is the input.
 3. Neither → explain the two ways to feed a JD in (paste with the command, or paste into `user/data/inbox.md` and run `/rolecraft`) and stop.
 
-## 1b. Run the deterministic engine
+## 1b. Run the engine: cache pass, then LLM extraction
 
-Before any freehand parsing, run the engine on the collected input. Write the
-input to a temp file (or use the inbox path directly) and run, from the plugin
-root:
+Skill extraction is LLM-first, with a deterministic cache for skills already seen.
+
+**Step A — deterministic cache pass.** Run, from the plugin root:
 
 ```
 node --import tsx core/src/cli.ts process <input-file>
 ```
 
-The engine returns a JSON array — one object per JD — each with:
+This returns a JSON array (one object per JD) with `jd` (canonical fields +
+detected `sections` + `raw`) and `tags` — skills matched from the per-user
+learned cache (`user/data/.rolecraft/learned-skills.json`, auto-seeded from the
+shipped vocabulary on first run). Each tag has `source: "cache"`. It also bumps
+each matched skill's `seen` count and persists the JD.
 
-- `jd`: the canonical JD (`title`, `company`, `location`, detected `sections`, `raw`, stable `id`)
-- `tags`: skills already matched against the controlled taxonomy, each with a
-  `canonical` key and a `bucket` of `required` or `nice`
+**Step B — LLM extraction of the rest.** Read `jd.raw` and identify every real
+skill / technology / competency that is NOT already in the cache `tags`. This is
+your job, not the engine's — it works for any domain (tech, finance, nursing,
+etc.), so do not limit yourself to software terms. For each new skill choose a
+stable lowercase `canonical` key, the `surface` form as it appeared, a `bucket`
+(`required` or `nice` based on the section), and a `domain` if clear.
 
-Use this JSON as the source of truth for company/title and for the skill list.
-Do NOT re-extract skills the engine already tagged. Your job for the remaining
-steps is to (a) handle anything the engine could not classify and (b) do the
-reasoning the engine does not: concepts, projects, narrative.
+**Step C — persist what you learned.** Write the new skills to a temp JSON file
+(an array of `{canonical, surface, domain}`) and run:
+
+```
+node --import tsx core/src/cli.ts learn --skills-file <temp-file>
+```
+
+Now those skills are in the cache and will be deterministic `source: "cache"`
+hits next time — the cache converges on this user's domains over time.
+
+Use the union of Step A (cache) + Step B (LLM) skills as the source of truth for
+the remaining steps. Do not re-extract skills already tagged.
 
 ## 2. Split and parse
 
@@ -40,7 +55,7 @@ Split the input on lines containing exactly `---NEW JOB---`; each segment is one
 
 - Company, title, location/remote policy, posted comp (if any)
 - Must-have requirements vs nice-to-haves
-- Named technologies: take these from the engine's `tags` (already categorized and bucketed as required/nice). Only add a technology the engine missed — when you do, note it so it can be added to `core/src/taxonomy/vocab.ts` later.
+- Named technologies and skills: the union of the engine's cache `tags` (step 1b.A) and the skills you extracted (step 1b.B). New skills must be persisted with `learn` (step 1b.C) so they become cache hits next time.
 - Named or implied concepts (domain ideas worth studying, not just tools — e.g. "settlement risk", "idempotent event processing")
 - Business domain and sub-sector
 - Visa/sponsorship signals
@@ -63,9 +78,9 @@ Append one entry per JD: heading `## YYYY-MM-DD — Company — Title`, then the
 
 ## 5. Tech stack → `user/data/stack-tracker.md`
 
-Source the technologies and their required/nice buckets from the engine's
-`tags` output (step 1b), not from a fresh scan of the JD text. The engine is
-authoritative for what tech appeared; you decide ranking and presentation.
+Source the technologies and their required/nice buckets from the union of the
+cache `tags` and your extracted skills (step 1b). The cache is authoritative for
+already-known skills; you supply the rest. You decide ranking and presentation.
 
 Same mechanics as concepts, but ranked within each category (Languages / Frameworks / Tools / Methodologies / Infra) by occurrence count across all processed JDs. Keep the file as ONE table — `| Category | Technology | Demand | Δ |` — rows grouped by category, ranked within each group; 🎓 marks tech the user already knows. Update the previous-rank block after re-ranking.
 
