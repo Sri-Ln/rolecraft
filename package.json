@@ -1,0 +1,5 @@
+{
+  "name": "rolecraft-monorepo",
+  "private": true,
+  "workspaces": ["core"]
+}
