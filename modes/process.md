@@ -13,13 +13,34 @@ Priority order:
 2. Otherwise read `user/data/inbox.md` (seed it from the template first if missing). Content below the paste marker is the input.
 3. Neither → explain the two ways to feed a JD in (paste with the command, or paste into `user/data/inbox.md` and run `/rolecraft`) and stop.
 
+## 1b. Run the deterministic engine
+
+Before any freehand parsing, run the engine on the collected input. Write the
+input to a temp file (or use the inbox path directly) and run, from the plugin
+root:
+
+```
+node --import tsx core/src/cli.ts process <input-file>
+```
+
+The engine returns a JSON array — one object per JD — each with:
+
+- `jd`: the canonical JD (`title`, `company`, `location`, detected `sections`, `raw`, stable `id`)
+- `tags`: skills already matched against the controlled taxonomy, each with a
+  `canonical` key and a `bucket` of `required` or `nice`
+
+Use this JSON as the source of truth for company/title and for the skill list.
+Do NOT re-extract skills the engine already tagged. Your job for the remaining
+steps is to (a) handle anything the engine could not classify and (b) do the
+reasoning the engine does not: concepts, projects, narrative.
+
 ## 2. Split and parse
 
 Split the input on lines containing exactly `---NEW JOB---`; each segment is one JD. That marker is the only automatic split — if the paste has no marker but looks like it describes more than one role, ask the user ("this reads like two distinct roles — process as two, or treat as one?") before splitting. For each JD extract:
 
 - Company, title, location/remote policy, posted comp (if any)
 - Must-have requirements vs nice-to-haves
-- Named technologies, each assigned a category: Languages / Frameworks / Tools / Methodologies / Infra
+- Named technologies: take these from the engine's `tags` (already categorized and bucketed as required/nice). Only add a technology the engine missed — when you do, note it so it can be added to `core/src/taxonomy/vocab.ts` later.
 - Named or implied concepts (domain ideas worth studying, not just tools — e.g. "settlement risk", "idempotent event processing")
 - Business domain and sub-sector
 - Visa/sponsorship signals
@@ -41,6 +62,10 @@ Append one entry per JD: heading `## YYYY-MM-DD — Company — Title`, then the
 7. Keep the file as ONE ranked table — `| # | Concept | Why it matters | Free sources |` — with rank, Δ, and 🔥/🎓 markers together in the `#` cell (e.g. `3 🔥 🆕`). No flat lists.
 
 ## 5. Tech stack → `user/data/stack-tracker.md`
+
+Source the technologies and their required/nice buckets from the engine's
+`tags` output (step 1b), not from a fresh scan of the JD text. The engine is
+authoritative for what tech appeared; you decide ranking and presentation.
 
 Same mechanics as concepts, but ranked within each category (Languages / Frameworks / Tools / Methodologies / Infra) by occurrence count across all processed JDs. Keep the file as ONE table — `| Category | Technology | Demand | Δ |` — rows grouped by category, ranked within each group; 🎓 marks tech the user already knows. Update the previous-rank block after re-ranking.
 
