@@ -100,3 +100,25 @@ describe('learn (spawned)', () => {
     expect(out['settlement-risk'].domain).toBe('finance');
   });
 });
+
+describe('process (no seed pollution, spawned)', () => {
+  it('persists only skills actually seen, never the unused seed vocab', () => {
+    const d = tmp();
+    const inbox = join(d, 'inbox.txt');
+    const store = join(d, 'jds.jsonl');
+    const cache = join(d, 'learned-skills.json');
+    writeFileSync(inbox, 'Engineer\nRequirements\nJava only.', 'utf8');
+
+    execFileSync(
+      process.execPath,
+      ['--import', 'tsx', cliPath, 'process', inbox, '--store', store, '--cache', cache],
+      { encoding: 'utf8', cwd: repoRoot },
+    );
+
+    const out = loadCache(cache);
+    expect(out.java.seen).toBe(1);       // matched → persisted
+    expect(out.java.domain).toBe('tech'); // domain carried over from the seed
+    expect(out.kubernetes).toBeUndefined(); // seed skill not in JD → NOT persisted
+    expect(out.python).toBeUndefined();
+  });
+});

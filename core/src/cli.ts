@@ -32,16 +32,26 @@ function processCmd(argv: string[]): void {
   const store = parseFlag(argv, '--store') ?? DEFAULT_STORE;
   const cachePath = parseFlag(argv, '--cache') ?? DEFAULT_CACHE;
 
-  let cache = seedFromVocab(loadCache(cachePath));
-  const records = run(readFileSync(file, 'utf8'), 'paste', cache);
+  // The seed is a read-only matching aid: match against seed + the user's
+  // cache, but only PERSIST skills actually seen. This keeps learned-skills.json
+  // a true record of what this user has encountered — e.g. a lawyer's cache
+  // never fills up with unused tech seeds.
+  const userCache = loadCache(cachePath);
+  const matchCache = seedFromVocab(userCache);
+  const records = run(readFileSync(file, 'utf8'), 'paste', matchCache);
+  let persisted = userCache;
   for (const record of records) {
     appendRecord(store, record);
-    cache = mergeSkills(
-      cache,
-      record.tags.map((t) => ({ canonical: t.canonical, surface: t.surface })),
+    persisted = mergeSkills(
+      persisted,
+      record.tags.map((t) => ({
+        canonical: t.canonical,
+        surface: t.surface,
+        domain: matchCache[t.canonical]?.domain,
+      })),
     );
   }
-  saveCache(cachePath, cache);
+  saveCache(cachePath, persisted);
   process.stdout.write(JSON.stringify(records, null, 2) + '\n');
 }
 
