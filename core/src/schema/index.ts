@@ -40,3 +40,13 @@ export interface JDRecord {
   jd: CanonicalJD;
   tags: SkillTag[];
 }
+
+export interface SkillCacheEntry {
+  canonical: string;
+  aliases: string[];   // lowercase surfaces seen for this skill
+  domain?: string;     // provenance / ranking only — never a match filter
+  seen: number;        // occurrence count across this user's JDs
+}
+
+// Keyed by canonical. Persisted as user/data/.rolecraft/learned-skills.json.
+export type SkillCache = Record<string, SkillCacheEntry>;
