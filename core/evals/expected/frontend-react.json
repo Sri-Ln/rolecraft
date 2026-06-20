@@ -1,0 +1,4 @@
+{
+  "required": ["typescript", "react", "node", "docker"],
+  "nice": ["aws"]
+}

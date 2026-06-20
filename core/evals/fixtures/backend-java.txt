@@ -1,0 +1,7 @@
+Senior Backend Engineer
+Company: Examplebank
+Requirements
+8+ years building services in Java and Spring Boot. Strong SQL and PostgreSQL.
+Experience operating Kafka and Kubernetes in production.
+Nice to have
+GraphQL and Redis.
