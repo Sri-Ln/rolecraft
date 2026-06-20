@@ -45,12 +45,27 @@ function main(): void {
     );
   }
 
+  const meanReqP = avg(reqScores, 'precision');
+  const meanReqR = avg(reqScores, 'recall');
+
   process.stdout.write(
-    `\nMEAN required P=${avg(reqScores, 'precision').toFixed(2)} ` +
-      `R=${avg(reqScores, 'recall').toFixed(2)} | ` +
+    `\nMEAN required P=${meanReqP.toFixed(2)} ` +
+      `R=${meanReqR.toFixed(2)} | ` +
       `nice P=${avg(niceScores, 'precision').toFixed(2)} ` +
       `R=${avg(niceScores, 'recall').toFixed(2)}\n`,
   );
+
+  // Quality gate: fail (non-zero exit) when required precision/recall regress
+  // below the threshold, so CI blocks PRs that make extraction worse.
+  // Tune via the EVAL_MIN env var (default 0.9).
+  const min = Number(process.env.EVAL_MIN ?? '0.9');
+  if (meanReqP < min || meanReqR < min) {
+    process.stderr.write(
+      `\nFAIL: required extraction below threshold ${min} ` +
+        `(P=${meanReqP.toFixed(2)}, R=${meanReqR.toFixed(2)})\n`,
+    );
+    process.exit(1);
+  }
 }
 
 main();
