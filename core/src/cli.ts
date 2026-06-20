@@ -4,9 +4,10 @@ import { splitJDs, normalize } from './ingest/index.js';
 import { tag } from './taxonomy/tag.js';
 import { appendRecord } from './archive/index.js';
 import { JDRecord, JDSource, SkillCache } from './schema/index.js';
-import { seedFromVocab } from './taxonomy/cache.js';
+import { loadCache, saveCache, seedFromVocab, mergeSkills } from './taxonomy/cache.js';
 
 const DEFAULT_STORE = 'user/data/.rolecraft/jds.jsonl';
+const DEFAULT_CACHE = 'user/data/.rolecraft/learned-skills.json';
 
 export function run(raw: string, source: JDSource = 'paste', cache?: SkillCache): JDRecord[] {
   const effective = cache ?? seedFromVocab({});
@@ -22,16 +23,51 @@ function parseFlag(argv: string[], name: string): string | undefined {
   return i >= 0 ? argv[i + 1] : undefined;
 }
 
-function main(argv: string[]): void {
-  const [cmd, file] = argv;
-  if (cmd !== 'process' || !file) {
-    process.stderr.write('usage: cli process <file> [--store <path>]\n');
+function processCmd(argv: string[]): void {
+  const file = argv[1];
+  if (!file) {
+    process.stderr.write('usage: cli process <file> [--store <path>] [--cache <path>]\n');
     process.exit(2);
   }
   const store = parseFlag(argv, '--store') ?? DEFAULT_STORE;
-  const records = run(readFileSync(file, 'utf8'), 'paste');
-  for (const record of records) appendRecord(store, record);
+  const cachePath = parseFlag(argv, '--cache') ?? DEFAULT_CACHE;
+
+  let cache = seedFromVocab(loadCache(cachePath));
+  const records = run(readFileSync(file, 'utf8'), 'paste', cache);
+  for (const record of records) {
+    appendRecord(store, record);
+    cache = mergeSkills(
+      cache,
+      record.tags.map((t) => ({ canonical: t.canonical, surface: t.surface })),
+    );
+  }
+  saveCache(cachePath, cache);
   process.stdout.write(JSON.stringify(records, null, 2) + '\n');
+}
+
+function learnCmd(argv: string[]): void {
+  const cachePath = parseFlag(argv, '--cache') ?? DEFAULT_CACHE;
+  const skillsFile = parseFlag(argv, '--skills-file');
+  if (!skillsFile) {
+    process.stderr.write('usage: cli learn --skills-file <path> [--cache <path>]\n');
+    process.exit(2);
+  }
+  const skills = JSON.parse(readFileSync(skillsFile, 'utf8')) as {
+    canonical: string;
+    surface?: string;
+    domain?: string;
+  }[];
+  const cache = mergeSkills(loadCache(cachePath), skills);
+  saveCache(cachePath, cache);
+  process.stdout.write(`learned ${skills.length} skill(s); cache now has ${Object.keys(cache).length}\n`);
+}
+
+function main(argv: string[]): void {
+  const cmd = argv[0];
+  if (cmd === 'process') return processCmd(argv);
+  if (cmd === 'learn') return learnCmd(argv);
+  process.stderr.write('usage: cli <process|learn> ...\n');
+  process.exit(2);
 }
 
 // Run main only when invoked directly (not when imported by tests).

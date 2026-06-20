@@ -6,6 +6,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { run } from '../src/cli.js';
 import { readRecords } from '../src/archive/index.js';
+import { loadCache } from '../src/taxonomy/cache.js';
 
 const testDir = dirname(fileURLToPath(import.meta.url)); // core/test
 const coreDir = dirname(testDir);                        // core
@@ -55,5 +56,47 @@ describe('main (spawned)', () => {
     const parsed = JSON.parse(out);
     expect(parsed).toHaveLength(2);
     expect(readRecords(store)).toHaveLength(2);
+  });
+});
+
+describe('process (cache integration, spawned)', () => {
+  it('creates+updates the learned cache and bumps seen on reprocess', () => {
+    const d = tmp();
+    const inbox = join(d, 'inbox.txt');
+    const store = join(d, 'jds.jsonl');
+    const cache = join(d, 'learned-skills.json');
+    writeFileSync(inbox, 'Engineer\nRequirements\nJava and React.', 'utf8');
+
+    const args = ['--import', 'tsx', cliPath, 'process', inbox, '--store', store, '--cache', cache];
+    execFileSync(process.execPath, args, { encoding: 'utf8', cwd: repoRoot });
+    const after1 = loadCache(cache);
+    expect(after1.java.seen).toBe(1);
+
+    execFileSync(process.execPath, args, { encoding: 'utf8', cwd: repoRoot });
+    const after2 = loadCache(cache);
+    expect(after2.java.seen).toBe(2); // reprocess bumps the count
+  });
+});
+
+describe('learn (spawned)', () => {
+  it('merges model-extracted skills from a file into the cache', () => {
+    const d = tmp();
+    const cache = join(d, 'learned-skills.json');
+    const skillsFile = join(d, 'new-skills.json');
+    writeFileSync(
+      skillsFile,
+      JSON.stringify([{ canonical: 'settlement-risk', surface: 'settlement risk', domain: 'finance' }]),
+      'utf8',
+    );
+
+    execFileSync(
+      process.execPath,
+      ['--import', 'tsx', cliPath, 'learn', '--cache', cache, '--skills-file', skillsFile],
+      { encoding: 'utf8', cwd: repoRoot },
+    );
+
+    const out = loadCache(cache);
+    expect(out['settlement-risk'].seen).toBe(1);
+    expect(out['settlement-risk'].domain).toBe('finance');
   });
 });
