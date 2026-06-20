@@ -6,10 +6,13 @@ function escapeRe(s: string): string {
 }
 
 // Match an alias only on token boundaries so "go" doesn't match "gocarts"
-// and "javascript" doesn't match "javascripting". Letters, digits and "."
-// count as word characters here (so "node.js" / "react.js" stay intact).
+// and "javascript" doesn't match "javascripting". The lookbehind blocks
+// matches that are preceded by a word char, '.', or '#' (so "node" won't
+// match inside ".node_modules" or "#node"). The lookahead blocks a plain
+// word char OR a dot followed by a word char (so "node" won't match in
+// "node.js"), but a bare trailing period (sentence end) is allowed.
 function aliasRegex(alias: string): RegExp {
-  return new RegExp(`(?<![\\w.#])${escapeRe(alias)}(?![\\w.])`, 'i');
+  return new RegExp(`(?<![\\w.#])${escapeRe(alias)}(?![\\w]|\\.[\\w])`, 'i');
 }
 
 function matchSurface(text: string): { canonical: string; surface: string }[] {
