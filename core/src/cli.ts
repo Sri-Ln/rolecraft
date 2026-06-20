@@ -52,11 +52,12 @@ function learnCmd(argv: string[]): void {
     process.stderr.write('usage: cli learn --skills-file <path> [--cache <path>]\n');
     process.exit(2);
   }
-  const skills = JSON.parse(readFileSync(skillsFile, 'utf8')) as {
-    canonical: string;
-    surface?: string;
-    domain?: string;
-  }[];
+  const parsed = JSON.parse(readFileSync(skillsFile, 'utf8')) as unknown;
+  if (!Array.isArray(parsed) || !parsed.every((s) => s && typeof s.canonical === 'string')) {
+    process.stderr.write('learn: skills file must be a JSON array of { canonical, surface?, domain? }\n');
+    process.exit(2);
+  }
+  const skills = parsed as { canonical: string; surface?: string; domain?: string }[];
   const cache = mergeSkills(loadCache(cachePath), skills);
   saveCache(cachePath, cache);
   process.stdout.write(`learned ${skills.length} skill(s); cache now has ${Object.keys(cache).length}\n`);
