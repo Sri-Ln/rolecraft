@@ -1,9 +1,23 @@
 # Rolecraft
 
-<div align="center">
+<!-- <div align="center">
 <img width="800" height="450" alt="banner" src="https://github.com/user-attachments/assets/af292823-bc08-486e-8eaa-887a67fb4d2b" />
-</div>
+</div> -->
 
+<div align="center">
+
+```
+                            888                                       .d888 888
+                          888                                      d88P"  888
+                        888                                      888    888
+      888d888 .d88b.  888  .d88b.  .d8888b 888d888 8888b.  888888 888888
+  888P"  d88""88b 888 d8P  Y8b d88P"   888P"      "88b 888    888
+ 888    888  888 888 88888888 888     888    .d888888 888    888
+ 888    Y88..88P 888 Y8b.     Y88b.   888    888  888 888    Y88b.
+ 888     "Y88P"  888  "Y8888   "Y8888P 888   "Y888888 888     "Y888
+```
+
+</div>
 > JD-driven study companion. Paste a job description; get back what to study, what to build, and where else this role exists.
 
 Rolecraft is a Claude Code plugin that turns job descriptions into a focused learning radar. It accumulates signals across the JDs you actually care about and surfaces:
