@@ -18,7 +18,7 @@
 ```
 
 </div>
-> JD-driven study companion. Paste a job description; get back what to study, what to build, and where else this role exists.
+JD-driven study companion. Paste a job description; get back what to study, what to build, and where else this role exists.
 
 Rolecraft is a Claude Code plugin that turns job descriptions into a focused learning radar. It accumulates signals across the JDs you actually care about and surfaces:
 
