@@ -1,6 +1,12 @@
 import { createHash } from 'node:crypto';
 
-export function jdId(company: string | undefined, title: string, raw: string): string {
+/**
+ * @param {string | undefined} company
+ * @param {string} title
+ * @param {string} raw
+ * @returns {string}
+ */
+export function jdId(company, title, raw) {
   const key = [
     (company ?? '').trim().toLowerCase(),
     title.trim().toLowerCase(),

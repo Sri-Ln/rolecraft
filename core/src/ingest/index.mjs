@@ -1,16 +1,26 @@
-import { CanonicalJD, JDSections, JDSource } from '../schema/index.js';
-import { jdId } from '../util/hash.js';
+import { jdId } from '../util/hash.mjs';
+
+/**
+ * @typedef {import('../schema/index.mjs').CanonicalJD} CanonicalJD
+ * @typedef {import('../schema/index.mjs').JDSections} JDSections
+ * @typedef {import('../schema/index.mjs').JDSource} JDSource
+ */
 
 const SPLIT_MARKER = /^---NEW JOB---$/m;
 
-export function splitJDs(raw: string): string[] {
+/**
+ * @param {string} raw
+ * @returns {string[]}
+ */
+export function splitJDs(raw) {
   return raw
     .split(SPLIT_MARKER)
     .map((s) => s.trim())
     .filter((s) => s.length > 0);
 }
 
-const SECTION_PATTERNS: { key: keyof JDSections; re: RegExp }[] = [
+/** @type {{ key: keyof JDSections; re: RegExp }[]} */
+const SECTION_PATTERNS = [
   { key: 'responsibilities', re: /^(responsibilities|what you'?ll do|the role)\b/i },
   { key: 'requirements', re: /^(requirements|qualifications|what we'?re looking for|must[- ]?haves?)\b/i },
   { key: 'niceToHave', re: /^(nice[- ]to[- ]have|bonus|preferred|pluses)\b/i },
@@ -18,16 +28,28 @@ const SECTION_PATTERNS: { key: keyof JDSections; re: RegExp }[] = [
   { key: 'comp', re: /^(compensation|salary|pay|benefits)\b/i },
 ];
 
-function stripHeadingMarks(line: string): string {
+/**
+ * @param {string} line
+ * @returns {string}
+ */
+function stripHeadingMarks(line) {
   return line.replace(/^#+\s*/, '').replace(/[:*_#]+$/g, '').trim();
 }
 
-function extractTitle(lines: string[]): string {
+/**
+ * @param {string[]} lines
+ * @returns {string}
+ */
+function extractTitle(lines) {
   const first = lines.find((l) => l.trim().length > 0) ?? '';
   return stripHeadingMarks(first);
 }
 
-function extractCompany(lines: string[]): string | undefined {
+/**
+ * @param {string[]} lines
+ * @returns {string | undefined}
+ */
+function extractCompany(lines) {
   for (const line of lines) {
     const m = line.match(/^\s*company\s*[:\-]\s*(.+)$/i);
     if (m) return m[1].trim();
@@ -39,9 +61,15 @@ function extractCompany(lines: string[]): string | undefined {
   return undefined;
 }
 
-function detectSections(lines: string[]): JDSections {
-  const buf: Partial<Record<keyof JDSections, string[]>> = {};
-  let current: keyof JDSections | null = null;
+/**
+ * @param {string[]} lines
+ * @returns {JDSections}
+ */
+function detectSections(lines) {
+  /** @type {Partial<Record<keyof JDSections, string[]>>} */
+  const buf = {};
+  /** @type {keyof JDSections | null} */
+  let current = null;
 
   for (const line of lines) {
     const headingText = stripHeadingMarks(line);
@@ -54,15 +82,22 @@ function detectSections(lines: string[]): JDSections {
     if (current) (buf[current] ??= []).push(line);
   }
 
-  const sections: JDSections = {};
-  for (const key of Object.keys(buf) as (keyof JDSections)[]) {
+  /** @type {JDSections} */
+  const sections = {};
+  for (const key of /** @type {(keyof JDSections)[]} */ (Object.keys(buf))) {
     const text = (buf[key] ?? []).join('\n').trim();
     if (text) sections[key] = text;
   }
   return sections;
 }
 
-export function normalize(segment: string, source: JDSource, sourceUrl?: string): CanonicalJD {
+/**
+ * @param {string} segment
+ * @param {JDSource} source
+ * @param {string} [sourceUrl]
+ * @returns {CanonicalJD}
+ */
+export function normalize(segment, source, sourceUrl) {
   const raw = segment.trim();
   const lines = raw.split(/\r?\n/);
   const title = extractTitle(lines);

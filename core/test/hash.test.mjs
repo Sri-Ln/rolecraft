@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { jdId } from '../src/util/hash.js';
+import { jdId } from '../src/util/hash.mjs';
 
 describe('jdId', () => {
   it('is stable for the same inputs', () => {

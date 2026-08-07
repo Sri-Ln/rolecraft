@@ -4,17 +4,17 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { run } from '../src/cli.js';
-import { readRecords } from '../src/archive/index.js';
-import { loadCache } from '../src/taxonomy/cache.js';
+import { run } from '../src/cli.mjs';
+import { readRecords } from '../src/archive/index.mjs';
+import { loadCache } from '../src/taxonomy/cache.mjs';
 
 const testDir = dirname(fileURLToPath(import.meta.url)); // core/test
 const coreDir = dirname(testDir);                        // core
-const repoRoot = dirname(coreDir);                       // repo root
-const cliPath = join(coreDir, 'src', 'cli.ts');
+const cliPath = join(coreDir, 'src', 'cli.mjs');
 
-const dirs: string[] = [];
-function tmp(): string {
+/** @type {string[]} */
+const dirs = [];
+function tmp() {
   const d = mkdtempSync(join(tmpdir(), 'rolecraft-cli-'));
   dirs.push(d);
   return d;
@@ -40,6 +40,8 @@ describe('run', () => {
   });
 });
 
+// Every spawn below runs plain `node <cli>` from a throwaway cwd: the engine
+// must work with no loader, no build step and no node_modules in scope.
 describe('main (spawned)', () => {
   it('reads a file, prints JSON, and appends to the store', () => {
     const d = tmp();
@@ -49,8 +51,8 @@ describe('main (spawned)', () => {
 
     const out = execFileSync(
       process.execPath,
-      ['--import', 'tsx', cliPath, 'process', inbox, '--store', store],
-      { encoding: 'utf8', cwd: repoRoot },
+      [cliPath, 'process', inbox, '--store', store],
+      { encoding: 'utf8', cwd: d },
     );
 
     const parsed = JSON.parse(out);
@@ -67,12 +69,12 @@ describe('process (cache integration, spawned)', () => {
     const cache = join(d, 'learned-skills.json');
     writeFileSync(inbox, 'Engineer\nRequirements\nJava and React.', 'utf8');
 
-    const args = ['--import', 'tsx', cliPath, 'process', inbox, '--store', store, '--cache', cache];
-    execFileSync(process.execPath, args, { encoding: 'utf8', cwd: repoRoot });
+    const args = [cliPath, 'process', inbox, '--store', store, '--cache', cache];
+    execFileSync(process.execPath, args, { encoding: 'utf8', cwd: d });
     const after1 = loadCache(cache);
     expect(after1.java.seen).toBe(1);
 
-    execFileSync(process.execPath, args, { encoding: 'utf8', cwd: repoRoot });
+    execFileSync(process.execPath, args, { encoding: 'utf8', cwd: d });
     const after2 = loadCache(cache);
     expect(after2.java.seen).toBe(2); // reprocess bumps the count
   });
@@ -91,8 +93,8 @@ describe('learn (spawned)', () => {
 
     execFileSync(
       process.execPath,
-      ['--import', 'tsx', cliPath, 'learn', '--cache', cache, '--skills-file', skillsFile],
-      { encoding: 'utf8', cwd: repoRoot },
+      [cliPath, 'learn', '--cache', cache, '--skills-file', skillsFile],
+      { encoding: 'utf8', cwd: d },
     );
 
     const out = loadCache(cache);
@@ -111,8 +113,8 @@ describe('process (no seed pollution, spawned)', () => {
 
     execFileSync(
       process.execPath,
-      ['--import', 'tsx', cliPath, 'process', inbox, '--store', store, '--cache', cache],
-      { encoding: 'utf8', cwd: repoRoot },
+      [cliPath, 'process', inbox, '--store', store, '--cache', cache],
+      { encoding: 'utf8', cwd: d },
     );
 
     const out = loadCache(cache);

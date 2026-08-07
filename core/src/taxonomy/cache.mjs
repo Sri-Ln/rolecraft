@@ -1,28 +1,48 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { SkillCache } from '../schema/index.js';
-import { VOCAB } from './vocab.js';
+import { VOCAB } from './vocab.mjs';
 
-export function loadCache(path: string): SkillCache {
+/**
+ * @typedef {import('../schema/index.mjs').SkillCache} SkillCache
+ */
+
+/**
+ * @param {string} path
+ * @returns {SkillCache}
+ */
+export function loadCache(path) {
   if (!existsSync(path)) return {};
-  return JSON.parse(readFileSync(path, 'utf8')) as SkillCache;
+  return /** @type {SkillCache} */ (JSON.parse(readFileSync(path, 'utf8')));
 }
 
-export function saveCache(path: string, cache: SkillCache): void {
+/**
+ * @param {string} path
+ * @param {SkillCache} cache
+ */
+export function saveCache(path, cache) {
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, JSON.stringify(cache, null, 2) + '\n', 'utf8');
 }
 
 // Deep-clone so callers never mutate the input.
-function clone(cache: SkillCache): SkillCache {
-  const next: SkillCache = {};
+/**
+ * @param {SkillCache} cache
+ * @returns {SkillCache}
+ */
+function clone(cache) {
+  /** @type {SkillCache} */
+  const next = {};
   for (const [k, v] of Object.entries(cache)) next[k] = { ...v, aliases: [...v.aliases] };
   return next;
 }
 
 // Pre-warm a cache from the seed vocabulary. Adds missing entries with seen=0;
 // never overwrites entries the user has already accumulated.
-export function seedFromVocab(cache: SkillCache): SkillCache {
+/**
+ * @param {SkillCache} cache
+ * @returns {SkillCache}
+ */
+export function seedFromVocab(cache) {
   const next = clone(cache);
   for (const entry of VOCAB) {
     if (!next[entry.canonical]) {
@@ -37,15 +57,21 @@ export function seedFromVocab(cache: SkillCache): SkillCache {
   return next;
 }
 
-export interface NewSkill {
-  canonical: string;
-  surface?: string;
-  domain?: string;
-}
+/**
+ * @typedef {object} NewSkill
+ * @property {string} canonical
+ * @property {string} [surface]
+ * @property {string} [domain]
+ */
 
 // Merge model-extracted (or cache-hit) skills into the cache: dedupe aliases,
 // bump seen counts, create entries that don't exist yet. Returns a new cache.
-export function mergeSkills(cache: SkillCache, skills: NewSkill[]): SkillCache {
+/**
+ * @param {SkillCache} cache
+ * @param {NewSkill[]} skills
+ * @returns {SkillCache}
+ */
+export function mergeSkills(cache, skills) {
   const next = clone(cache);
   for (const s of skills) {
     const key = s.canonical.trim().toLowerCase();

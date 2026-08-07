@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { splitJDs, normalize } from '../src/ingest/index.js';
+import { splitJDs, normalize } from '../src/ingest/index.mjs';
 
 const SAMPLE = `Senior Backend Engineer
 Company: Acme Corp

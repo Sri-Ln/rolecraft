@@ -20,8 +20,12 @@ Skill extraction is LLM-first, with a deterministic cache for skills already see
 **Step A — deterministic cache pass.** Run, from the plugin root:
 
 ```
-node --import tsx core/src/cli.ts process <input-file>
+node core/src/cli.mjs process <input-file>
 ```
+
+The engine is plain ESM on Node built-ins — no install, no build step. If `node`
+isn't available, skip 1b entirely and extract every skill yourself; the rest of
+the mode is unchanged.
 
 This returns a JSON array (one object per JD) with `jd` (canonical fields +
 detected `sections` + `raw`) and `tags` — skills matched from the per-user
@@ -40,7 +44,7 @@ stable lowercase `canonical` key, the `surface` form as it appeared, a `bucket`
 (an array of `{canonical, surface, domain}`) and run:
 
 ```
-node --import tsx core/src/cli.ts learn --skills-file <temp-file>
+node core/src/cli.mjs learn --skills-file <temp-file>
 ```
 
 Now those skills are in the cache and will be deterministic `source: "cache"`

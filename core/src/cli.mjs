@@ -1,15 +1,26 @@
 import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
-import { splitJDs, normalize } from './ingest/index.js';
-import { tag } from './taxonomy/tag.js';
-import { appendRecord } from './archive/index.js';
-import { JDRecord, JDSource, SkillCache } from './schema/index.js';
-import { loadCache, saveCache, seedFromVocab, mergeSkills } from './taxonomy/cache.js';
+import { splitJDs, normalize } from './ingest/index.mjs';
+import { tag } from './taxonomy/tag.mjs';
+import { appendRecord } from './archive/index.mjs';
+import { loadCache, saveCache, seedFromVocab, mergeSkills } from './taxonomy/cache.mjs';
+
+/**
+ * @typedef {import('./schema/index.mjs').JDRecord} JDRecord
+ * @typedef {import('./schema/index.mjs').JDSource} JDSource
+ * @typedef {import('./schema/index.mjs').SkillCache} SkillCache
+ */
 
 const DEFAULT_STORE = 'user/data/.rolecraft/jds.jsonl';
 const DEFAULT_CACHE = 'user/data/.rolecraft/learned-skills.json';
 
-export function run(raw: string, source: JDSource = 'paste', cache?: SkillCache): JDRecord[] {
+/**
+ * @param {string} raw
+ * @param {JDSource} [source]
+ * @param {SkillCache} [cache]
+ * @returns {JDRecord[]}
+ */
+export function run(raw, source = 'paste', cache) {
   const effective = cache ?? seedFromVocab({});
   const entries = Object.values(effective);
   return splitJDs(raw).map((segment) => {
@@ -18,12 +29,20 @@ export function run(raw: string, source: JDSource = 'paste', cache?: SkillCache)
   });
 }
 
-function parseFlag(argv: string[], name: string): string | undefined {
+/**
+ * @param {string[]} argv
+ * @param {string} name
+ * @returns {string | undefined}
+ */
+function parseFlag(argv, name) {
   const i = argv.indexOf(name);
   return i >= 0 ? argv[i + 1] : undefined;
 }
 
-function processCmd(argv: string[]): void {
+/**
+ * @param {string[]} argv
+ */
+function processCmd(argv) {
   const file = argv[1];
   if (!file) {
     process.stderr.write('usage: cli process <file> [--store <path>] [--cache <path>]\n');
@@ -55,25 +74,32 @@ function processCmd(argv: string[]): void {
   process.stdout.write(JSON.stringify(records, null, 2) + '\n');
 }
 
-function learnCmd(argv: string[]): void {
+/**
+ * @param {string[]} argv
+ */
+function learnCmd(argv) {
   const cachePath = parseFlag(argv, '--cache') ?? DEFAULT_CACHE;
   const skillsFile = parseFlag(argv, '--skills-file');
   if (!skillsFile) {
     process.stderr.write('usage: cli learn --skills-file <path> [--cache <path>]\n');
     process.exit(2);
   }
-  const parsed = JSON.parse(readFileSync(skillsFile, 'utf8')) as unknown;
+  /** @type {unknown} */
+  const parsed = JSON.parse(readFileSync(skillsFile, 'utf8'));
   if (!Array.isArray(parsed) || !parsed.every((s) => s && typeof s.canonical === 'string')) {
     process.stderr.write('learn: skills file must be a JSON array of { canonical, surface?, domain? }\n');
     process.exit(2);
   }
-  const skills = parsed as { canonical: string; surface?: string; domain?: string }[];
+  const skills = /** @type {{ canonical: string; surface?: string; domain?: string }[]} */ (parsed);
   const cache = mergeSkills(loadCache(cachePath), skills);
   saveCache(cachePath, cache);
   process.stdout.write(`learned ${skills.length} skill(s); cache now has ${Object.keys(cache).length}\n`);
 }
 
-function main(argv: string[]): void {
+/**
+ * @param {string[]} argv
+ */
+function main(argv) {
   const cmd = argv[0];
   if (cmd === 'process') return processCmd(argv);
   if (cmd === 'learn') return learnCmd(argv);
@@ -82,12 +108,8 @@ function main(argv: string[]): void {
 }
 
 // Run main only when invoked directly (not when imported by tests).
-// pathToFileURL normalizes drive letters and percent-encoding across platforms;
-// the .endsWith fallback covers the tsx loader, where argv[1] is the .ts source.
+// pathToFileURL normalizes drive letters and percent-encoding across platforms.
 const entry = process.argv[1];
-const invokedDirectly =
-  (entry !== undefined && import.meta.url === pathToFileURL(entry).href) ||
-  entry?.endsWith('cli.ts') === true;
-if (invokedDirectly) {
+if (entry !== undefined && import.meta.url === pathToFileURL(entry).href) {
   main(process.argv.slice(2));
 }

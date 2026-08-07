@@ -2,14 +2,17 @@
   "name": "@rolecraft/core",
   "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
+    "cli": "node src/cli.mjs",
+    "evals": "node evals/run-evals.mjs",
     "test": "vitest run",
-    "cli": "tsx src/cli.ts",
-    "evals": "tsx evals/run-evals.ts"
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "tsx": "^4.19.0",
     "typescript": "^5.6.0",
     "vitest": "^2.1.0"
   }

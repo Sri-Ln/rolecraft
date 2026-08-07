@@ -2,11 +2,15 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { appendRecord, readRecords } from '../src/archive/index.js';
-import { JDRecord } from '../src/schema/index.js';
+import { appendRecord, readRecords } from '../src/archive/index.mjs';
 
-const dirs: string[] = [];
-function tmpStore(): string {
+/**
+ * @typedef {import('../src/schema/index.mjs').JDRecord} JDRecord
+ */
+
+/** @type {string[]} */
+const dirs = [];
+function tmpStore() {
   const d = mkdtempSync(join(tmpdir(), 'rolecraft-'));
   dirs.push(d);
   return join(d, 'nested', 'jds.jsonl');
@@ -15,7 +19,11 @@ afterEach(() => {
   for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true });
 });
 
-const rec = (id: string): JDRecord => ({
+/**
+ * @param {string} id
+ * @returns {JDRecord}
+ */
+const rec = (id) => ({
   jd: {
     id, source: 'paste', title: 'X', sections: {}, raw: 'r', capturedAt: '2026-06-20',
   },

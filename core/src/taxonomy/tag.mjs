@@ -1,25 +1,44 @@
-import { CanonicalJD, SkillBucket, SkillTag } from '../schema/index.js';
+/**
+ * @typedef {import('../schema/index.mjs').CanonicalJD} CanonicalJD
+ * @typedef {import('../schema/index.mjs').SkillBucket} SkillBucket
+ * @typedef {import('../schema/index.mjs').SkillTag} SkillTag
+ */
 
 // Anything with a canonical key and surface aliases can be matched: the seed
 // VOCAB or the user's learned cache both satisfy this shape.
-export interface Matchable {
-  canonical: string;
-  aliases: string[];
-}
+/**
+ * @typedef {object} Matchable
+ * @property {string} canonical
+ * @property {string[]} aliases
+ */
 
-function escapeRe(s: string): string {
+/**
+ * @param {string} s
+ * @returns {string}
+ */
+function escapeRe(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 // Match an alias only on token boundaries so "go" doesn't match "gocarts" and
 // "java" doesn't match "javascript". A trailing bare period is allowed
 // (e.g. "Go."), but "node.js" is not split into "node".
-function aliasRegex(alias: string): RegExp {
+/**
+ * @param {string} alias
+ * @returns {RegExp}
+ */
+function aliasRegex(alias) {
   return new RegExp(`(?<![\\w.#])${escapeRe(alias)}(?![\\w]|\\.[\\w])`, 'i');
 }
 
-function matchSurface(text: string, entries: Matchable[]): { canonical: string; surface: string }[] {
-  const hits: { canonical: string; surface: string }[] = [];
+/**
+ * @param {string} text
+ * @param {Matchable[]} entries
+ * @returns {{ canonical: string; surface: string }[]}
+ */
+function matchSurface(text, entries) {
+  /** @type {{ canonical: string; surface: string }[]} */
+  const hits = [];
   for (const entry of entries) {
     for (const alias of entry.aliases) {
       const m = aliasRegex(alias).exec(text);
@@ -33,10 +52,21 @@ function matchSurface(text: string, entries: Matchable[]): { canonical: string; 
 }
 
 // Deterministic cache/seed pass: tag a JD against a list of known skills.
-export function tag(jd: CanonicalJD, entries: Matchable[]): SkillTag[] {
-  const found = new Map<string, SkillTag>();
+/**
+ * @param {CanonicalJD} jd
+ * @param {Matchable[]} entries
+ * @returns {SkillTag[]}
+ */
+export function tag(jd, entries) {
+  /** @type {Map<string, SkillTag>} */
+  const found = new Map();
 
-  const apply = (text: string | undefined, bucket: SkillBucket, allowUpgrade: boolean) => {
+  /**
+   * @param {string | undefined} text
+   * @param {SkillBucket} bucket
+   * @param {boolean} allowUpgrade
+   */
+  const apply = (text, bucket, allowUpgrade) => {
     if (!text) return;
     for (const hit of matchSurface(text, entries)) {
       const existing = found.get(hit.canonical);

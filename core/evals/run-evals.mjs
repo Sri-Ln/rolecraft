@@ -1,34 +1,46 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { run } from '../src/cli.js';
-import { score, PR } from './score.js';
+import { run } from '../src/cli.mjs';
+import { score } from './score.mjs';
+
+/**
+ * @typedef {import('./score.mjs').PR} PR
+ */
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixturesDir = join(here, 'fixtures');
 const expectedDir = join(here, 'expected');
 
-interface Expected {
-  required: string[];
-  nice: string[];
-}
+/**
+ * @typedef {object} Expected
+ * @property {string[]} required
+ * @property {string[]} nice
+ */
 
-function avg(prs: PR[], k: keyof PR): number {
+/**
+ * @param {PR[]} prs
+ * @param {keyof PR} k
+ * @returns {number}
+ */
+function avg(prs, k) {
   if (prs.length === 0) return 1;
   return prs.reduce((s, p) => s + p[k], 0) / prs.length;
 }
 
-function main(): void {
+function main() {
   const files = readdirSync(fixturesDir).filter((f) => f.endsWith('.txt'));
-  const reqScores: PR[] = [];
-  const niceScores: PR[] = [];
+  /** @type {PR[]} */
+  const reqScores = [];
+  /** @type {PR[]} */
+  const niceScores = [];
 
   for (const file of files) {
     const base = file.replace(/\.txt$/, '');
     const raw = readFileSync(join(fixturesDir, file), 'utf8');
-    const expected = JSON.parse(
-      readFileSync(join(expectedDir, `${base}.json`), 'utf8'),
-    ) as Expected;
+    const expected = /** @type {Expected} */ (
+      JSON.parse(readFileSync(join(expectedDir, `${base}.json`), 'utf8'))
+    );
 
     const tags = run(raw, 'paste')[0].tags;
     const predReq = tags.filter((t) => t.bucket === 'required').map((t) => t.canonical);

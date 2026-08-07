@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { score } from '../evals/score.js';
+import { score } from '../evals/score.mjs';
 
 describe('score', () => {
   it('is perfect when sets match', () => {

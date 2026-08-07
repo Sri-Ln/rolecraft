@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { VOCAB } from '../src/taxonomy/vocab.js';
+import { VOCAB } from '../src/taxonomy/vocab.mjs';
 
 describe('VOCAB loader', () => {
   it('loads entries from the data files', () => {

@@ -1,10 +1,16 @@
-export interface PR {
-  precision: number;
-  recall: number;
-  f1: number;
-}
+/**
+ * @typedef {object} PR
+ * @property {number} precision
+ * @property {number} recall
+ * @property {number} f1
+ */
 
-export function score(predicted: string[], expected: string[]): PR {
+/**
+ * @param {string[]} predicted
+ * @param {string[]} expected
+ * @returns {PR}
+ */
+export function score(predicted, expected) {
   const p = new Set(predicted);
   const e = new Set(expected);
   let tp = 0;

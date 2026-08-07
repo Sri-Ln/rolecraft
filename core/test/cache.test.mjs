@@ -2,10 +2,11 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { loadCache, saveCache, seedFromVocab, mergeSkills } from '../src/taxonomy/cache.js';
+import { loadCache, saveCache, seedFromVocab, mergeSkills } from '../src/taxonomy/cache.mjs';
 
-const dirs: string[] = [];
-function tmpPath(): string {
+/** @type {string[]} */
+const dirs = [];
+function tmpPath() {
   const d = mkdtempSync(join(tmpdir(), 'rolecraft-cache-'));
   dirs.push(d);
   return join(d, 'nested', 'learned-skills.json');

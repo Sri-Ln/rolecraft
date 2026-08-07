@@ -1,10 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { normalize } from '../src/ingest/index.js';
-import { tag } from '../src/taxonomy/tag.js';
-import { VOCAB } from '../src/taxonomy/vocab.js';
-import { SkillTag } from '../src/schema/index.js';
+import { normalize } from '../src/ingest/index.mjs';
+import { tag } from '../src/taxonomy/tag.mjs';
+import { VOCAB } from '../src/taxonomy/vocab.mjs';
 
-function bucketOf(tags: SkillTag[], canonical: string): string | undefined {
+/**
+ * @param {import('../src/schema/index.mjs').SkillTag[]} tags
+ * @param {string} canonical
+ * @returns {string | undefined}
+ */
+function bucketOf(tags, canonical) {
   return tags.find((t) => t.canonical === canonical)?.bucket;
 }
 
