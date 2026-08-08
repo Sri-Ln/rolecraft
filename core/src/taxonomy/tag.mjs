@@ -51,6 +51,22 @@ function matchSurface(text, entries) {
   return hits;
 }
 
+// The posting minus its nice-to-have block. Compared line by line because the
+// sections were built from these same lines, so the two always agree.
+/**
+ * @param {CanonicalJD} jd
+ * @returns {string}
+ */
+function outsideNiceToHave(jd) {
+  const nice = jd.sections.niceToHave;
+  if (!nice) return jd.raw;
+  const niceLines = new Set(nice.split('\n'));
+  return jd.raw
+    .split(/\r?\n/)
+    .filter((line) => !niceLines.has(line))
+    .join('\n');
+}
+
 // Deterministic cache/seed pass: tag a JD against a list of known skills.
 /**
  * @param {CanonicalJD} jd
@@ -81,7 +97,14 @@ export function tag(jd, entries) {
   apply(jd.sections.requirements, 'required', true);
   apply(jd.sections.responsibilities, 'required', true);
   apply(jd.sections.niceToHave, 'nice', true);
-  apply(jd.raw, 'required', false);
+
+  // Final sweep over everything that is NOT the wishlist. A skill named
+  // anywhere else in the posting is treated as expected, and may promote one
+  // first seen in the nice-to-have list — that is what rescues a requirement
+  // when an unusual heading kept its section from being detected. Slightly
+  // over-eager (an "about us" mention counts), which is the safer error:
+  // marking a real requirement optional quietly costs you study time.
+  apply(outsideNiceToHave(jd), 'required', true);
 
   return [...found.values()];
 }

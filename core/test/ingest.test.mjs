@@ -47,6 +47,38 @@ describe('normalize', () => {
     expect(jd.sections.niceToHave).toContain('Kafka');
   });
 
+  it('detects headings that real postings qualify', () => {
+    const jd = normalize(`SDE II
+Job Responsibilities
+Build ordering services.
+Basic Qualifications
+Java and SQL.
+Preferred Qualifications
+Kafka exposure.`, 'paste');
+    expect(jd.sections.responsibilities).toContain('Build ordering services.');
+    expect(jd.sections.requirements).toContain('Java and SQL.');
+    // "Preferred Qualifications" is a wishlist despite saying "qualifications"
+    expect(jd.sections.niceToHave).toContain('Kafka exposure.');
+  });
+
+  it('reads "About the role" as context, not a duties list', () => {
+    const jd = normalize('Engineer\nAbout the role\nYou will use Java.', 'paste');
+    expect(jd.sections.about).toContain('You will use Java.');
+    expect(jd.sections.responsibilities).toBeUndefined();
+  });
+
+  it('does not mistake bulleted or sentence-like body lines for headings', () => {
+    const jd = normalize(`Engineer
+Required Qualifications
+- Experience gathering requirements from stakeholders
+Strong Java skills.
+We are flexible about requirements for the right candidate here.
+Comfortable with SQL.`, 'paste');
+    expect(jd.sections.requirements).toContain('Strong Java skills.');
+    expect(jd.sections.requirements).toContain('Comfortable with SQL.');
+    expect(jd.sections.about).toBeUndefined();
+  });
+
   it('retains the raw body and sets source + a date id', () => {
     const jd = normalize(SAMPLE, 'paste');
     expect(jd.source).toBe('paste');

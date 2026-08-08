@@ -1,0 +1,4 @@
+{
+  "required": ["java", "sql", "aws", "docker"],
+  "nice": ["kubernetes", "react"]
+}

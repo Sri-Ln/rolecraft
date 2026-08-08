@@ -47,6 +47,28 @@ describe('tag', () => {
     expect(bucketOf(tag(jd, VOCAB), 'java')).toBe('required');
   });
 
+  it('promotes a wishlist skill that is also named outside the wishlist', () => {
+    // "Overview" is not a heading the engine knows, so the requirement lives in
+    // no section at all — the raw sweep is what has to rescue it.
+    const jd = normalize(`Engineer
+Overview
+We run the trading platform on Java.
+Preferred Qualifications
+Java certification.`, 'paste');
+    expect(bucketOf(tag(jd, VOCAB), 'java')).toBe('required');
+  });
+
+  it('leaves a skill that appears only in the wishlist as nice', () => {
+    const jd = normalize(`Engineer
+Required Qualifications
+Java.
+Preferred Qualifications
+GraphQL.`, 'paste');
+    const tags = tag(jd, VOCAB);
+    expect(bucketOf(tags, 'graphql')).toBe('nice'); // guards against over-promotion
+    expect(bucketOf(tags, 'java')).toBe('required');
+  });
+
   it('stamps source as cache on every tag', () => {
     const tags = tag(normalize(JD, 'paste'), VOCAB);
     expect(tags.every((t) => t.source === 'cache')).toBe(true);
