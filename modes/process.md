@@ -33,6 +33,14 @@ learned cache (`user/data/.rolecraft/learned-skills.json`, auto-seeded from the
 shipped vocabulary on first run). Each tag has `source: "cache"`. It also bumps
 each matched skill's `seen` count and persists the JD.
 
+**Duplicates.** A JD whose body is byte-identical to one already processed comes
+back with `duplicate: { skipped: true, firstSeenAt }` and is neither archived nor
+counted — one JD pasted twice must not inflate its own stack in the rankings.
+Skip skipped entries in every step below, and tell the user in the report which
+ones were skipped and when they were first seen. A repost with any edit is a
+different JD and counts normally. If the user says an identical repost is a
+genuine new opening, re-run the same command with `--allow-duplicates`.
+
 **Step B — LLM extraction of the rest.** Read `jd.raw` and identify every real
 skill / technology / competency that is NOT already in the cache `tags`. This is
 your job, not the engine's — it works for any domain (tech, finance, nursing,

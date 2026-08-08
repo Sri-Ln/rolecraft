@@ -2,12 +2,13 @@ import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { splitJDs, normalize } from './ingest/index.mjs';
 import { tag } from './taxonomy/tag.mjs';
-import { appendRecord } from './archive/index.mjs';
+import { appendRecord, readRecords } from './archive/index.mjs';
 import { loadCache, saveCache, seedFromVocab, mergeSkills } from './taxonomy/cache.mjs';
 
 /**
  * @typedef {import('./schema/index.mjs').JDRecord} JDRecord
  * @typedef {import('./schema/index.mjs').JDSource} JDSource
+ * @typedef {import('./schema/index.mjs').ProcessOutput} ProcessOutput
  * @typedef {import('./schema/index.mjs').SkillCache} SkillCache
  */
 
@@ -45,11 +46,14 @@ function parseFlag(argv, name) {
 function processCmd(argv) {
   const file = argv[1];
   if (!file) {
-    process.stderr.write('usage: cli process <file> [--store <path>] [--cache <path>]\n');
+    process.stderr.write(
+      'usage: cli process <file> [--store <path>] [--cache <path>] [--allow-duplicates]\n',
+    );
     process.exit(2);
   }
   const store = parseFlag(argv, '--store') ?? DEFAULT_STORE;
   const cachePath = parseFlag(argv, '--cache') ?? DEFAULT_CACHE;
+  const allowDuplicates = argv.includes('--allow-duplicates');
 
   // The seed is a read-only matching aid: match against seed + the user's
   // cache, but only PERSIST skills actually seen. This keeps learned-skills.json
@@ -58,9 +62,36 @@ function processCmd(argv) {
   const userCache = loadCache(cachePath);
   const matchCache = seedFromVocab(userCache);
   const records = run(readFileSync(file, 'utf8'), 'paste', matchCache);
+
+  // Ids already in the store, with the date each was first captured. The id
+  // hashes the whole body, so this only catches a byte-identical JD: a reposted
+  // role with any edit is a different id and still counts as fresh demand.
+  /** @type {Map<string, string>} */
+  const seenIds = new Map();
+  for (const existing of readRecords(store)) {
+    if (!seenIds.has(existing.jd.id)) seenIds.set(existing.jd.id, existing.jd.capturedAt);
+  }
+
   let persisted = userCache;
+  let skipped = 0;
+  /** @type {ProcessOutput[]} */
+  const output = [];
+
   for (const record of records) {
+    const firstSeenAt = seenIds.get(record.jd.id);
+
+    // Already processed: don't archive it again and don't bump any skill's
+    // count, or one JD pasted twice inflates its own stack in the rankings.
+    if (firstSeenAt !== undefined && !allowDuplicates) {
+      skipped += 1;
+      output.push({ ...record, duplicate: { skipped: true, firstSeenAt } });
+      continue;
+    }
+
     appendRecord(store, record);
+    // Track within this run too, so a paste containing the same JD twice is
+    // caught even when the store was empty to begin with.
+    if (firstSeenAt === undefined) seenIds.set(record.jd.id, record.jd.capturedAt);
     persisted = mergeSkills(
       persisted,
       record.tags.map((t) => ({
@@ -69,9 +100,19 @@ function processCmd(argv) {
         domain: matchCache[t.canonical]?.domain,
       })),
     );
+    output.push(
+      firstSeenAt === undefined ? record : { ...record, duplicate: { skipped: false, firstSeenAt } },
+    );
   }
+
   saveCache(cachePath, persisted);
-  process.stdout.write(JSON.stringify(records, null, 2) + '\n');
+  process.stdout.write(JSON.stringify(output, null, 2) + '\n');
+  if (skipped > 0) {
+    process.stderr.write(
+      `skipped ${skipped} of ${records.length} JD(s) already processed; ` +
+        're-run with --allow-duplicates to count them again\n',
+    );
+  }
 }
 
 /**

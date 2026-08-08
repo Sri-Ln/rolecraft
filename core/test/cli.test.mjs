@@ -62,7 +62,7 @@ describe('main (spawned)', () => {
 });
 
 describe('process (cache integration, spawned)', () => {
-  it('creates+updates the learned cache and bumps seen on reprocess', () => {
+  it('creates the learned cache, then leaves counts alone on an identical reprocess', () => {
     const d = tmp();
     const inbox = join(d, 'inbox.txt');
     const store = join(d, 'jds.jsonl');
@@ -71,12 +71,67 @@ describe('process (cache integration, spawned)', () => {
 
     const args = [cliPath, 'process', inbox, '--store', store, '--cache', cache];
     execFileSync(process.execPath, args, { encoding: 'utf8', cwd: d });
-    const after1 = loadCache(cache);
-    expect(after1.java.seen).toBe(1);
+    expect(loadCache(cache).java.seen).toBe(1);
 
+    // Same bytes → same id → already processed, so nothing is counted twice.
     execFileSync(process.execPath, args, { encoding: 'utf8', cwd: d });
-    const after2 = loadCache(cache);
-    expect(after2.java.seen).toBe(2); // reprocess bumps the count
+    expect(loadCache(cache).java.seen).toBe(1);
+    expect(readRecords(store)).toHaveLength(1);
+  });
+
+  it('marks the skipped JD as a duplicate in its output', () => {
+    const d = tmp();
+    const inbox = join(d, 'inbox.txt');
+    const store = join(d, 'jds.jsonl');
+    const cache = join(d, 'learned-skills.json');
+    writeFileSync(inbox, 'Engineer\nRequirements\nJava and React.', 'utf8');
+
+    const args = [cliPath, 'process', inbox, '--store', store, '--cache', cache];
+    execFileSync(process.execPath, args, { encoding: 'utf8', cwd: d });
+    const out = JSON.parse(execFileSync(process.execPath, args, { encoding: 'utf8', cwd: d }));
+
+    expect(out[0].duplicate.skipped).toBe(true);
+    expect(out[0].duplicate.firstSeenAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it('counts an identical JD again under --allow-duplicates', () => {
+    const d = tmp();
+    const inbox = join(d, 'inbox.txt');
+    const store = join(d, 'jds.jsonl');
+    const cache = join(d, 'learned-skills.json');
+    writeFileSync(inbox, 'Engineer\nRequirements\nJava and React.', 'utf8');
+
+    const args = [cliPath, 'process', inbox, '--store', store, '--cache', cache];
+    execFileSync(process.execPath, args, { encoding: 'utf8', cwd: d });
+    const out = JSON.parse(
+      execFileSync(process.execPath, [...args, '--allow-duplicates'], { encoding: 'utf8', cwd: d }),
+    );
+
+    expect(loadCache(cache).java.seen).toBe(2); // deliberate repost, counted
+    expect(readRecords(store)).toHaveLength(2);
+    expect(out[0].duplicate.skipped).toBe(false); // still flagged as a repeat
+  });
+
+  it('skips a JD repeated inside one paste, but keeps a different role with the same title', () => {
+    const d = tmp();
+    const inbox = join(d, 'inbox.txt');
+    const store = join(d, 'jds.jsonl');
+    const cache = join(d, 'learned-skills.json');
+    const SDE = 'SDE II\nCompany: Amazon\nRequirements\nJava and AWS.';
+    const OTHER = 'SDE II\nCompany: Amazon\nRequirements\nPython and Docker.';
+    writeFileSync(inbox, [SDE, OTHER, SDE].join('\n---NEW JOB---\n'), 'utf8');
+
+    execFileSync(
+      process.execPath,
+      [cliPath, 'process', inbox, '--store', store, '--cache', cache],
+      { encoding: 'utf8', cwd: d },
+    );
+
+    // Same company+title, different body → a real second role, kept.
+    expect(readRecords(store)).toHaveLength(2);
+    const out = loadCache(cache);
+    expect(out.java.seen).toBe(1); // the repeat did not double-count
+    expect(out.python.seen).toBe(1);
   });
 });
 

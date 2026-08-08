@@ -59,6 +59,19 @@
  */
 
 /**
+ * Set on a CLI result when the JD's id was already in the store. `skipped` is
+ * false when --allow-duplicates forced it through anyway.
+ * @typedef {object} DuplicateInfo
+ * @property {boolean} skipped
+ * @property {string} firstSeenAt capturedAt of the record already in the store
+ */
+
+/**
+ * What `process` prints: a record, plus duplicate provenance when there is any.
+ * @typedef {JDRecord & { duplicate?: DuplicateInfo }} ProcessOutput
+ */
+
+/**
  * @typedef {object} SkillCacheEntry
  * @property {string} canonical
  * @property {string[]} aliases lowercase surfaces seen for this skill
