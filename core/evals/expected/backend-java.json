@@ -1,0 +1,4 @@
+{
+  "required": ["java", "spring", "sql", "postgresql", "kafka", "kubernetes"],
+  "nice": ["graphql", "redis"]
+}

@@ -1,0 +1,21 @@
+Software Engineer III - C#/.Net, Markets
+Company: Examplebank
+Chicago, IL
+
+Job Responsibilities
+- Executes software solutions, design, development, and technical troubleshooting
+- Creates secure, high-quality production code that runs synchronously with appropriate systems
+- Contributes to software engineering communities of practice
+
+Required Qualifications
+- Formal training or certification on software engineering concepts and 3+ years applied experience
+- Proficient in coding in one or more languages, specifically C# and SQL
+- Experience developing and supporting high throughput, low latency, multi-threaded systems
+- Solid understanding of agile methodologies (CI/CD, application resiliency, security)
+- We are flexible about requirements for the right candidate in this market
+
+Preferred Qualifications
+- Multi-asset valuation and risk management software
+- RDBMS (e.g. MS SQL Server)
+- Data cache products (e.g. Redis) and messaging services (e.g. Kafka)
+- Cloud technologies (e.g. AWS, GCP)

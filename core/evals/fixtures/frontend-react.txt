@@ -1,0 +1,6 @@
+Frontend Engineer
+Company: Exampleshop
+Requirements
+Expert in TypeScript and React. Comfortable with Node and Docker.
+Nice to have
+Exposure to AWS.

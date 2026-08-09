@@ -1,0 +1,16 @@
+SDE II
+Company: Exampleretail
+Seattle, WA
+
+About the team
+We own the ordering platform that runs on Java and AWS.
+
+Basic Qualifications
+- 3+ years of non-internship professional software development experience
+- Experience programming with at least one modern language such as Java
+- Experience with SQL and distributed systems at scale
+- Shipping containerized services with Docker
+
+Preferred Qualifications
+- Experience with Kubernetes and Docker
+- Familiarity with React for internal tooling

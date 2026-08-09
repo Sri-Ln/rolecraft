@@ -13,13 +13,54 @@ Priority order:
 2. Otherwise read `user/data/inbox.md` (seed it from the template first if missing). Content below the paste marker is the input.
 3. Neither → explain the two ways to feed a JD in (paste with the command, or paste into `user/data/inbox.md` and run `/rolecraft`) and stop.
 
+## 1b. Run the engine (an aid, never a blocker)
+
+Run, from the plugin root:
+
+```
+node core/src/cli.mjs process <input-file>
+```
+
+The engine is plain ESM on Node built-ins — no install, no build step. If `node`
+isn't available, skip 1b entirely and extract every skill yourself; the rest of
+the mode is unchanged.
+
+In ~0.15s it returns a JSON array (one object per JD) with `jd` (canonical
+fields + detected `sections` + `raw` + a content-hash `id`) and `tags` — skills
+matched from the shipped vocabulary, each bucketed `required`/`nice` by which
+section it appeared in. It also archives the JD to
+`user/data/.rolecraft/jds.jsonl`.
+
+**Duplicates.** A JD whose body is byte-identical to one already processed comes
+back with `duplicate: { skipped: true, firstSeenAt }` and is neither archived nor
+counted — one JD pasted twice must not inflate its own stack in the rankings.
+Skip skipped entries in every step below, and tell the user in the report which
+ones were skipped and when they were first seen. A repost with any edit is a
+different JD and counts normally. If the user says an identical repost is a
+genuine new opening, re-run the same command with `--allow-duplicates`.
+
+**How to use `tags`.** Treat them as a hint that saves you *naming* decisions —
+not as a separate extraction to reconcile against your own. Read the JD in full
+exactly as you would without the engine; the engine only knows a small shipped
+vocabulary and will always miss most of a real posting, especially outside
+software. Where it did name a skill, reuse its `canonical` spelling and its
+bucket, so the same technology is named identically across every run.
+
+**Do not** produce a diff of what the engine missed, and **do not** run `learn`
+during this pass. That round-trip costs more time than the engine saves — it was
+measured at ~35s against a ~0.15s engine call. The `learn` command exists for a
+future batched rebuild step and is deliberately not part of the interactive path.
+The `sections` and bucketing are the engine's real contribution here: required
+vs nice comes from where a skill sits in the document, not from your reading of
+it.
+
 ## 2. Split and parse
 
 Split the input on lines containing exactly `---NEW JOB---`; each segment is one JD. That marker is the only automatic split — if the paste has no marker but looks like it describes more than one role, ask the user ("this reads like two distinct roles — process as two, or treat as one?") before splitting. For each JD extract:
 
 - Company, title, location/remote policy, posted comp (if any)
 - Must-have requirements vs nice-to-haves
-- Named technologies, each assigned a category: Languages / Frameworks / Tools / Methodologies / Infra
+- Named technologies and skills, each assigned a category: Languages / Frameworks / Tools / Methodologies / Infra. Where the engine tagged one (step 1b), keep its `canonical` spelling and its `required`/`nice` bucket.
 - Named or implied concepts (domain ideas worth studying, not just tools — e.g. "settlement risk", "idempotent event processing")
 - Business domain and sub-sector
 - Visa/sponsorship signals
@@ -41,6 +82,10 @@ Append one entry per JD: heading `## YYYY-MM-DD — Company — Title`, then the
 7. Keep the file as ONE ranked table — `| # | Concept | Why it matters | Free sources |` — with rank, Δ, and 🔥/🎓 markers together in the `#` cell (e.g. `3 🔥 🆕`). No flat lists.
 
 ## 5. Tech stack → `user/data/stack-tracker.md`
+
+Where the engine tagged a technology (step 1b), take its `required`/`nice`
+bucket — that comes from the document's own section structure rather than your
+reading. Everything else, including ranking and presentation, is yours.
 
 Same mechanics as concepts, but ranked within each category (Languages / Frameworks / Tools / Methodologies / Infra) by occurrence count across all processed JDs. Keep the file as ONE table — `| Category | Technology | Demand | Δ |` — rows grouped by category, ranked within each group; 🎓 marks tech the user already knows. Update the previous-rank block after re-ranking.
 

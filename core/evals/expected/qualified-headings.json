@@ -1,0 +1,4 @@
+{
+  "required": ["csharp", "sql"],
+  "nice": ["redis", "kafka", "aws", "gcp"]
+}
