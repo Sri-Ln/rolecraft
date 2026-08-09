@@ -13,11 +13,9 @@ Priority order:
 2. Otherwise read `user/data/inbox.md` (seed it from the template first if missing). Content below the paste marker is the input.
 3. Neither → explain the two ways to feed a JD in (paste with the command, or paste into `user/data/inbox.md` and run `/rolecraft`) and stop.
 
-## 1b. Run the engine: cache pass, then LLM extraction
+## 1b. Run the engine (an aid, never a blocker)
 
-Skill extraction is LLM-first, with a deterministic cache for skills already seen.
-
-**Step A — deterministic cache pass.** Run, from the plugin root:
+Run, from the plugin root:
 
 ```
 node core/src/cli.mjs process <input-file>
@@ -27,11 +25,11 @@ The engine is plain ESM on Node built-ins — no install, no build step. If `nod
 isn't available, skip 1b entirely and extract every skill yourself; the rest of
 the mode is unchanged.
 
-This returns a JSON array (one object per JD) with `jd` (canonical fields +
-detected `sections` + `raw`) and `tags` — skills matched from the per-user
-learned cache (`user/data/.rolecraft/learned-skills.json`, auto-seeded from the
-shipped vocabulary on first run). Each tag has `source: "cache"`. It also bumps
-each matched skill's `seen` count and persists the JD.
+In ~0.15s it returns a JSON array (one object per JD) with `jd` (canonical
+fields + detected `sections` + `raw` + a content-hash `id`) and `tags` — skills
+matched from the shipped vocabulary, each bucketed `required`/`nice` by which
+section it appeared in. It also archives the JD to
+`user/data/.rolecraft/jds.jsonl`.
 
 **Duplicates.** A JD whose body is byte-identical to one already processed comes
 back with `duplicate: { skipped: true, firstSeenAt }` and is neither archived nor
@@ -41,25 +39,20 @@ ones were skipped and when they were first seen. A repost with any edit is a
 different JD and counts normally. If the user says an identical repost is a
 genuine new opening, re-run the same command with `--allow-duplicates`.
 
-**Step B — LLM extraction of the rest.** Read `jd.raw` and identify every real
-skill / technology / competency that is NOT already in the cache `tags`. This is
-your job, not the engine's — it works for any domain (tech, finance, nursing,
-etc.), so do not limit yourself to software terms. For each new skill choose a
-stable lowercase `canonical` key, the `surface` form as it appeared, a `bucket`
-(`required` or `nice` based on the section), and a `domain` if clear.
+**How to use `tags`.** Treat them as a hint that saves you *naming* decisions —
+not as a separate extraction to reconcile against your own. Read the JD in full
+exactly as you would without the engine; the engine only knows a small shipped
+vocabulary and will always miss most of a real posting, especially outside
+software. Where it did name a skill, reuse its `canonical` spelling and its
+bucket, so the same technology is named identically across every run.
 
-**Step C — persist what you learned.** Write the new skills to a temp JSON file
-(an array of `{canonical, surface, domain}`) and run:
-
-```
-node core/src/cli.mjs learn --skills-file <temp-file>
-```
-
-Now those skills are in the cache and will be deterministic `source: "cache"`
-hits next time — the cache converges on this user's domains over time.
-
-Use the union of Step A (cache) + Step B (LLM) skills as the source of truth for
-the remaining steps. Do not re-extract skills already tagged.
+**Do not** produce a diff of what the engine missed, and **do not** run `learn`
+during this pass. That round-trip costs more time than the engine saves — it was
+measured at ~35s against a ~0.15s engine call. The `learn` command exists for a
+future batched rebuild step and is deliberately not part of the interactive path.
+The `sections` and bucketing are the engine's real contribution here: required
+vs nice comes from where a skill sits in the document, not from your reading of
+it.
 
 ## 2. Split and parse
 
@@ -67,7 +60,7 @@ Split the input on lines containing exactly `---NEW JOB---`; each segment is one
 
 - Company, title, location/remote policy, posted comp (if any)
 - Must-have requirements vs nice-to-haves
-- Named technologies and skills: the union of the engine's cache `tags` (step 1b.A) and the skills you extracted (step 1b.B). New skills must be persisted with `learn` (step 1b.C) so they become cache hits next time.
+- Named technologies and skills, each assigned a category: Languages / Frameworks / Tools / Methodologies / Infra. Where the engine tagged one (step 1b), keep its `canonical` spelling and its `required`/`nice` bucket.
 - Named or implied concepts (domain ideas worth studying, not just tools — e.g. "settlement risk", "idempotent event processing")
 - Business domain and sub-sector
 - Visa/sponsorship signals
@@ -90,9 +83,9 @@ Append one entry per JD: heading `## YYYY-MM-DD — Company — Title`, then the
 
 ## 5. Tech stack → `user/data/stack-tracker.md`
 
-Source the technologies and their required/nice buckets from the union of the
-cache `tags` and your extracted skills (step 1b). The cache is authoritative for
-already-known skills; you supply the rest. You decide ranking and presentation.
+Where the engine tagged a technology (step 1b), take its `required`/`nice`
+bucket — that comes from the document's own section structure rather than your
+reading. Everything else, including ranking and presentation, is yours.
 
 Same mechanics as concepts, but ranked within each category (Languages / Frameworks / Tools / Methodologies / Infra) by occurrence count across all processed JDs. Keep the file as ONE table — `| Category | Technology | Demand | Δ |` — rows grouped by category, ranked within each group; 🎓 marks tech the user already knows. Update the previous-rank block after re-ranking.
 
